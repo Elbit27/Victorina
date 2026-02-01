@@ -1,0 +1,68 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block title %}Регистрация - Victorina Battle{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'core/css/signup.css' %}">
+
+{% endblock %}
+
+{% block content %}
+<div class="login-wrapper">
+    <div class="fb-form-container signup-card">
+
+        <div class="brand-section" style="text-align: center; width: 100%; padding: 0; margin-bottom: 20px;">
+            <h1 class="brand-logo" style="font-size: 48px;">victorina</h1>
+        </div>
+
+        {% if errors %}
+        <div class="error-box">
+            <ul>
+                {% for field, field_errors in errors.items %}
+                {% for error in field_errors %}
+                <li>{{ error }}</li>
+                {% endfor %}
+                {% endfor %}
+            </ul>z
+        </div>
+        {% endif %}
+
+        <div class="fb-card">
+            <h2 style="margin-bottom: 5px; font-size: 24px;">Создать аккаунт</h2>
+            <p style="color: #606770; margin-bottom: 20px;">Это быстро и легко.</p>
+            <hr class="form-divider">
+
+            <form method="post" action="{% url 'signup' %}">
+                {% csrf_token %}
+
+                <input type="text" name="username" placeholder="Имя пользователя (никнейм)"
+                       value="{{ form_data.username|default:'' }}" required>
+                {% if errors.username %}<p class="error-msg">{{ errors.username.0 }}</p>{% endif %}
+
+                <input type="email" name="email" placeholder="Электронный адрес"
+                       value="{{ form_data.email|default:'' }}" required>
+                {% if errors.email %}<p class="error-msg">{{ errors.email.0 }}</p>{% endif %}
+
+                <input type="password" name="password" placeholder="Новый пароль" required>
+                {% if errors.password %}<p class="error-msg">{{ errors.password.0 }}</p>{% endif %}
+
+                <input type="password" name="password2" placeholder="Повторите пароль" required>
+                {% if errors.password %}<p class="error-msg">{{ errors.password.0 }}</p>{% endif %}
+
+                <p style="font-size: 11px; color: #777; text-align: left; margin: 10px 0;">
+                    Нажимая «Регистрация», вы соглашаетесь с нашими Правилами и Политикой данных.
+                </p>
+
+                <button type="submit" class="create-account-btn" style="width: 100%; height: 48px; font-size: 18px; cursor: pointer;">
+                    Регистрация
+                </button>
+            </form>
+
+            <div style="margin-top: 15px;">
+                <a href="{% url 'login' %}" style="color: #0866ff; text-decoration: none; font-size: 15px;">Уже есть аккаунт?</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

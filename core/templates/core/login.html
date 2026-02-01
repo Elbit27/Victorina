@@ -1,0 +1,49 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block title %}Вход в Victorina{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'core/css/login.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="login-wrapper">
+    <div class="login-container">
+
+        <div class="brand-section">
+            <h1 class="brand-logo">victorina</h1>
+            <p class="brand-tagline">
+                Victorina помогает вам всегда оставаться на связи и сражаться в интеллектуальных битвах со своими знакомыми.
+            </p>
+        </div>
+
+        <div class="form-section">
+            <div class="login-card">
+                <form method="post" action="#"> {% csrf_token %}
+
+                    <div class="input-group">
+                        <input type="text" name="username" placeholder="Электронный адрес или номер телефона" required>
+                    </div>
+
+                    <div class="input-group">
+                        <input type="password" name="password" placeholder="Пароль" required>
+                    </div>
+
+                    <button type="submit" class="login-btn">Вход</button>
+
+                    <a href="#" class="forgot-password">Забыли пароль?</a>
+
+                    <hr class="form-divider">
+
+                    <div class="create-account-wrapper">
+                        <a href="{% url 'signup' %}" class="create-account-btn">Создать новый аккаунт</a>
+                    </div>
+                </form>
+            </div>
+            <p class="footer-note"><b>Создать Страницу</b> знаменитости, музыкальной группы или компании.</p>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,63 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block title %}Платформа для командных битв{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'core/css/frontpage.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="landing-container">
+
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Битва интеллектов для вашего офиса</h1>
+            <p>Создавайте викторины, разделяйте коллег на команды и узнайте, кто в вашей компании настоящий знаток.</p>
+
+            <div class="cta-group">
+                {% if user.is_authenticated %}
+                    <a href="#" class="btn btn-primary">Создать новую игру</a>
+                {% else %}
+                    <a href="{#}" class="btn btn-primary">Начать бесплатно</a>
+                    <a href="#about" class="btn btn-secondary">Узнать больше</a>
+                {% endif %}
+            </div>
+        </div>
+        <div class="hero-image">
+            <div class="game-demo-card">
+                <div class="team-vs">
+                    <span class="t1">Team Alpha</span>
+                    <span class="vs">VS</span>
+                    <span class="t2">Team Beta</span>
+                </div>
+                <div class="pulse-line"></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="about" class="features">
+        <h2>Почему выбирают Victorina?</h2>
+        <div class="features-grid">
+            <article class="feature-item">
+                <div class="icon">👥</div>
+                <h3>Командный дух</h3>
+                <p>Идеально для тимбилдинга. Делите компанию на 2 команды и разжигайте азарт соревнования.</p>
+            </article>
+
+            <article class="feature-item">
+                <div class="icon">⚡</div>
+                <h3>Режим реального времени</h3>
+                <p>Мгновенная реакция на "кнопку-зуммер". Кто первый нажал — тот и отвечает.</p>
+            </article>
+
+            <article class="feature-item">
+                <div class="icon">📊</div>
+                <h3>База знаний</h3>
+                <p>Используйте SQL для хранения тысяч вопросов и ведения глобального рейтинга компаний.</p>
+            </article>
+        </div>
+    </section>
+
+</div>
+{% endblock %}
