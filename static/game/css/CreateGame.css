@@ -1,0 +1,162 @@
+/* Основной контейнер */
+.dashboard-container {
+    max-width: 850px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+.dash-header {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.dash-header h1 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: #1e293b;
+    letter-spacing: -1px;
+}
+
+.dash-header h1 span {
+    background: linear-gradient(135deg, #0866ff, #00c6ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Карточка заголовка игры */
+.setup-card {
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.03);
+    border: 1px solid #f1f5f9;
+}
+
+.setup-card label {
+    display: block;
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: #475569;
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+#game-title {
+    border: 2px solid #f1f5f9;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    background: #f8fafc;
+}
+
+#game-title:focus {
+    outline: none;
+    border-color: #0866ff;
+    background: #fff;
+    box-shadow: 0 0 0 4px rgba(8, 102, 255, 0.1);
+}
+
+/* Карточки вопросов */
+.question-card {
+    background: #ffffff;
+    border: 1px solid #f1f5f9;
+    padding: 30px;
+    border-radius: 20px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease;
+}
+
+.question-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 20px -5px rgba(0, 0, 0, 0.08);
+}
+
+.q-text {
+    font-size: 1.1rem !important;
+    font-weight: 600;
+    border: 2px solid #f1f5f9 !important;
+    background: #f8fafc !important;
+    border-radius: 10px !important;
+}
+
+/* Варианты ответов */
+.answer-row {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 12px;
+    align-items: center;
+    padding: 8px;
+    border-radius: 12px;
+    background: #fdfdfd;
+}
+
+.answer-row:hover {
+    background: #f8fafc;
+}
+
+.is-correct {
+    width: 22px;
+    height: 22px;
+    accent-color: #42b72a;
+    cursor: pointer;
+}
+
+.a-text {
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 8px !important;
+    padding: 10px 15px !important;
+}
+
+/* Кнопки */
+.btn-add {
+    background: #ffffff;
+    border: 2px dashed #cbd5e1;
+    color: #64748b;
+    width: 100%;
+    padding: 20px;
+    cursor: pointer;
+    border-radius: 15px;
+    font-weight: 700;
+    font-size: 1rem;
+    margin-bottom: 30px;
+    transition: all 0.2s;
+}
+
+.btn-add:hover {
+    background: #f8fafc;
+    border-color: #0866ff;
+    color: #0866ff;
+}
+
+.remove-btn {
+    color: #94a3b8;
+    font-size: 0.85rem;
+    cursor: pointer;
+    padding: 5px 10px;
+    border-radius: 6px;
+    transition: all 0.2s;
+}
+
+.remove-btn:hover {
+    background: #fee2e2;
+    color: #ef4444;
+}
+
+.launch-btn {
+    background: linear-gradient(135deg, #0866ff, #0549b7);
+    color: white;
+    padding: 20px 80px;
+    font-size: 1.1rem;
+    font-weight: 800;
+    border-radius: 16px;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 10px 25px rgba(8, 102, 255, 0.3);
+    transition: all 0.3s ease;
+}
+
+.launch-btn:hover {
+    transform: scale(1.02);
+    box-shadow: 0 15px 35px rgba(8, 102, 255, 0.4);
+}

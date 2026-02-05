@@ -1,0 +1,116 @@
+{% extends "core/base.html" %}
+{% csrf_token %}
+{% load static %}
+
+{% block title %}Создание Викторины{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'game/css/CreateGame.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container" style="max-width: 800px;">
+    <header class="dash-header">
+        <h1>Конструктор <span>Викторины</span></h1>
+    </header>
+
+    <div id="game-builder">
+        <div class="setup-card" style="margin-bottom: 20px;">
+            <label>Название викторины</label>
+            <input type="text" id="game-title" placeholder="Например: Знатоки Python" style="width: 100%; height: 50px; font-size: 18px; padding: 10px;">
+        </div>
+
+        <div id="questions-container">
+            </div>
+
+        <button type="button" class="btn-add" onclick="addQuestion()">+ Добавить вопрос</button>
+
+        <div class="form-footer">
+            <button type="button" id="submit-game" class="launch-btn">СОХРАНИТЬ ВИКТОРИНУ</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    let questionCount = 0;
+
+    function addQuestion() {
+        questionCount++;
+        const container = document.getElementById('questions-container');
+        const qHtml = `
+            <div class="question-card" id="q-${questionCount}">
+                <div style="display:flex; justify-content:space-between;">
+                    <label>Вопрос №${questionCount}</label>
+                    <span class="remove-btn" onclick="document.getElementById('q-${questionCount}').remove()">Удалить</span>
+                </div>
+                <input type="text" class="q-text" placeholder="Введите текст вопроса" style="width:100%; margin: 10px 0;">
+
+                <div class="answers-list">
+                    <div class="answer-row">
+                        <input type="radio" name="correct-${questionCount}" class="is-correct" checked>
+                        <input type="text" class="a-text" placeholder="Ответ 1">
+                    </div>
+                    <div class="answer-row">
+                        <input type="radio" name="correct-${questionCount}" class="is-correct">
+                        <input type="text" class="a-text" placeholder="Ответ 2">
+                    </div>
+                </div>
+                <button type="button" style="font-size: 12px; background:none; border:none; color:#0866ff; cursor:pointer;" onclick="addAnswer(this, ${questionCount})">+ Добавить вариант ответа</button>
+            </div>
+        `;
+        container.insertAdjacentHTML('beforeend', qHtml);
+    }
+
+    function addAnswer(btn, qId) {
+        const list = btn.previousElementSibling;
+        const aHtml = `
+            <div class="answer-row">
+                <input type="radio" name="correct-${qId}" class="is-correct">
+                <input type="text" class="a-text" placeholder="Следующий ответ">
+                <span class="remove-btn" onclick="this.parentElement.remove()">×</span>
+            </div>`;
+        list.insertAdjacentHTML('beforeend', aHtml);
+    }
+
+    document.getElementById('submit-game').addEventListener('click', async function() {
+        const data = {
+            title: document.getElementById('game-title').value,
+            questions: []
+        };
+
+        document.querySelectorAll('.question-card').forEach((qCard, index) => {
+            const question = {
+                text: qCard.querySelector('.q-text').value,
+                order: index + 1,
+                answers: []
+            };
+            qCard.querySelectorAll('.answer-row').forEach(aRow => {
+                question.answers.push({
+                    text: aRow.querySelector('.a-text').value,
+                    is_correct: aRow.querySelector('.is-correct').checked
+                });
+            });
+            data.questions.push(question);
+        });
+
+        const response = await fetch(window.location.href, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify(data)
+        });
+
+        if (response.ok) {
+            window.location.href = '/';
+        } else {
+            const err = await response.json();
+            alert("Ошибка при сохранении: " + JSON.stringify(err));
+        }
+    });
+
+    // Добавим первый вопрос сразу
+    addQuestion();
+</script>
+{% endblock %}

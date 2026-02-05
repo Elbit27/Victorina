@@ -53,6 +53,12 @@
     margin-left: 15px;
 }
 
+.btn-admin {
+    background-color: ##0866ff;
+    color: #4b4f56;
+    margin-left: 15px;
+}
+
 /* Визуальный элемент (Demo Card) */
 .game-demo-card {
     background: white;

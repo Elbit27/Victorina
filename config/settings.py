@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     # my_apps
     'account',
     'core',
+    'game',
 ]
 
 MIDDLEWARE = [
