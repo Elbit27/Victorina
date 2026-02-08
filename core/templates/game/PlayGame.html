@@ -1,0 +1,53 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block title %}Битва: {{ game.title }}{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'game/css/PlayGame.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="play-container">
+    <div class="progress-container">
+        <div id="progress-bar" class="progress-bar"></div>
+    </div>
+
+    <div id="game-screen" class="question-box">
+        <div id="progress" class="question-number">Загрузка...</div>
+        <h2 id="question-text">Приготовьтесь...</h2>
+
+        <div id="answers-grid" class="answers-grid">
+            </div>
+    </div>
+
+    <div id="result-screen" class="result-card" style="display: none;">
+        <div class="score-circle" id="final-score-val">0</div>
+        <h2>Игра окончена!</h2>
+        <p id="final-score" style="font-size: 20px; color: #64748b; margin: 20px 0;"></p>
+        <a href="{% url 'game_list' %}" class="launch-btn" style="text-decoration: none; display: inline-block;">Вернуться в лобби</a>
+    </div>
+</div>
+
+<script id="game-data" type="application/json">
+{
+  "questions": [
+    {% for q in game.questions.all %}
+    {
+      "text": "{{ q.text|escapejs }}",
+      "answers": [
+        {% for a in q.answers.all %}
+        {
+          "text": "{{ a.text|escapejs }}",
+          "is_correct": {{ a.is_correct|yesno:"true,false" }}
+        }{% if not forloop.last %},{% endif %}
+        {% endfor %}
+      ]
+    }{% if not forloop.last %},{% endif %}
+    {% endfor %}
+  ]
+}
+</script>
+
+<script src="{% static 'game/js/PlayGame.js' %}"></script>
+{% endblock %}

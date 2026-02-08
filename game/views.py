@@ -1,29 +1,18 @@
 from django.shortcuts import render
-from rest_framework import permissions
 from django.views import generic
 from .models import Game
 from .serializers import GameSerializer
-
-
-
-def create_game(request):
-    return render(request, 'game/CreateGame.html')
-
-# class GameViewSet(viewsets.ModelViewSet):
-#     serializer_class = GameSerializer
-#     permission_classes = [permissions.IsAdminUser]
-#
-#     def get_queryset(self):
-#         return Game.objects.filter(created_by=self.request.user)
-
-
-# class GameList(generics.ListCreateAPIView):
-#     queryset = Game.objects.all()       #put template name after
-#     serializer_class = GameSerializer
-
 import json
 from django.http import JsonResponse
 
+def game_list(request):
+    games = Game.objects.all()
+    return render(request, 'game/GameList.html', {'games': games})
+
+def play_game(request, game_id):
+    game = Game.objects.get(id=game_id)
+    # Мы передаем игру, а вопросы подтянем через сериализатор или прямо в шаблоне
+    return render(request, 'game/PlayGame.html', {'game': game})
 
 class GameCreateView(generic.CreateView):
     template_name = 'game/CreateGame.html'

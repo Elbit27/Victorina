@@ -1,0 +1,24 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'game/css/CreateGame.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <header class="dash-header">
+        <h1>Выберите <span>Битву</span></h1>
+    </header>
+
+    <div class="games-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px;">
+        {% for game in games %}
+        <div class="setup-card game-card" style="text-align: center;">
+            <h3>{{ game.title }}</h3>
+            <p style="color: #64748b; margin: 10px 0;">Вопросов: {{ game.questions.count }}</p>
+            <a href="{% url 'play_game' game.id %}" class="launch-btn" style="padding: 10px 30px; font-size: 14px;">Начать</a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

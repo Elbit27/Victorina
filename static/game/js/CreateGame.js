@@ -1,6 +1,5 @@
 let questionCount = 0;
 
-// Функция для получения куки по имени
 function getCookie(name) {
     let cookieValue = null;
     if (document.cookie && document.cookie !== '') {
@@ -57,7 +56,7 @@ function addQuestion() {
     }
 
     document.getElementById('submit-game').addEventListener('click', async function() {
-        const csrftoken = getCookie('csrftoken'); // Получаем токен
+        const csrftoken = getCookie('csrftoken');
         const data = {
             title: document.getElementById('game-title').value,
             questions: []
@@ -95,5 +94,4 @@ function addQuestion() {
         }
     });
 
-    // Добавим первый вопрос сразу
     addQuestion();

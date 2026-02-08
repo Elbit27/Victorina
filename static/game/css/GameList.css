@@ -1,0 +1,84 @@
+/* Контейнер сетки */
+.games-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 30px;
+    padding: 20px 0;
+}
+
+/* Стили карточки игры */
+.game-card {
+    background: #ffffff;
+    border: 1px solid #f1f5f9;
+    border-radius: 24px;
+    padding: 40px 30px;
+    text-align: center;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 220px;
+}
+
+/* Эффект при наведении на карточку */
+.game-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(8, 102, 255, 0.1);
+    border-color: rgba(8, 102, 255, 0.2);
+}
+
+/* Заголовок викторины */
+.game-card h3 {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: #1e293b;
+    margin-bottom: 12px;
+    line-height: 1.2;
+}
+
+/* Счетчик вопросов */
+.question-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #f0f7ff;
+    color: #0866ff;
+    padding: 6px 14px;
+    border-radius: 50px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    margin-bottom: 25px;
+}
+
+/* Кнопка "Начать" внутри карточки */
+.game-card .launch-btn {
+    width: 100%;
+    padding: 14px;
+    font-size: 1rem;
+    font-weight: 700;
+    border-radius: 12px;
+    text-decoration: none;
+    background: #f8fafc;
+    color: #1e293b;
+    border: 2px solid #f1f5f9;
+    transition: all 0.2s;
+}
+
+.game-card:hover .launch-btn {
+    background: linear-gradient(135deg, #0866ff, #0549b7);
+    color: white;
+    border-color: transparent;
+    box-shadow: 0 8px 15px rgba(8, 102, 255, 0.2);
+}
+
+/* Если игр еще нет */
+.empty-state {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 60px;
+    background: #f8fafc;
+    border-radius: 20px;
+    border: 2px dashed #e2e8f0;
+    color: #94a3b8;
+}
