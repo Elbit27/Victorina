@@ -6,3 +6,9 @@ first commit includes base setups, authentification methods and templates.
 
 Feb 5
 Finally done with create a game page. Only staff can create a game, regular user can only play a games.
+
+Feb 8
+I made a game functionality, but still didn't add web-socket connection. It's just one player version yet
+
+feb 14
+There is main part. Game play page, but also there is too many issues. In next I will fix them all.
