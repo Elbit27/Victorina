@@ -16,6 +16,7 @@ ALLOWED_HOSTS = config('ALLOWED_HOSTS').split(",")
 
 # Application definition
 INSTALLED_APPS = [
+    'daphne',  # Обязательно в самый верх!
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -30,6 +31,7 @@ INSTALLED_APPS = [
     'account',
     'core',
     'game',
+    'channels'
 ]
 
 MIDDLEWARE = [
@@ -141,3 +143,15 @@ REST_FRAMEWORK = {
 }
 
 REST_USE_JWT = True
+
+
+
+ASGI_APPLICATION = 'config.asgi.application'
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)], # Проверь порт своего Redis
+        },
+    },
+}

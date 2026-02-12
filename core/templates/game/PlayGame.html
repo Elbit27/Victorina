@@ -7,25 +7,55 @@
 <link rel="stylesheet" href="{% static 'game/css/PlayGame.css' %}">
 {% endblock %}
 
+
 {% block content %}
 <div class="play-container">
-    <div class="progress-container">
-        <div id="progress-bar" class="progress-bar"></div>
+    <div id="lobby-screen" class="question-box">
+        <h2>Ожидание игроков...</h2>
+        <div class="team-controls">
+            <button onclick="changeTeam('A')" class="btn-team-a">За команду А</button>
+            <button onclick="changeTeam('B')" class="btn-team-b">За команду Б</button>
+        </div>
+        <div style="display: flex; justify-content: space-around; margin: 20px 0;">
+         <div class="team-a-container">
+            <h3>Команда А</h3>
+            <ul id="list-a"></ul> </div>
+        <div class="team-b-container">
+            <h3>Команда Б</h3>
+            <ul id="list-b"></ul> </div>
+        </div>
+        {% if user.is_staff or user.is_superuser %}
+            <button id="start-now-btn" class="launch-btn">Начать сейчас</button>
+        {% else %}
+            <p>Ждем администратора...</p>
+        {% endif %}
     </div>
 
-    <div id="game-screen" class="question-box">
-        <div id="progress" class="question-number">Загрузка...</div>
-        <h2 id="question-text">Приготовьтесь...</h2>
+    <div id="main-game-ui" style="display: none;">
+        <div class="live-score">
+            Команда А: <span id="score-a">0</span> |
+            Команда Б: <span id="score-b">0</span>
+        </div>
 
-        <div id="answers-grid" class="answers-grid">
-            </div>
+        <div class="progress-container">
+            <div id="progress-bar" class="progress-bar"></div>
+        </div>
+        <div id="game-screen" class="question-box">
+            <div id="progress" class="question-number">...</div>
+            <h2 id="question-text">Приготовьтесь...</h2>
+            <div id="answers-grid" class="answers-grid"></div>
+        </div>
     </div>
 
     <div id="result-screen" class="result-card" style="display: none;">
         <div class="score-circle" id="final-score-val">0</div>
         <h2>Игра окончена!</h2>
-        <p id="final-score" style="font-size: 20px; color: #64748b; margin: 20px 0;"></p>
-        <a href="{% url 'game_list' %}" class="launch-btn" style="text-decoration: none; display: inline-block;">Вернуться в лобби</a>
+        <div class="score-board">
+            Команда А: <span id="score-a">0</span> |
+            Команда Б: <span id="score-b">0</span>
+        </div>
+        <p id="final-score"></p>
+        <a href="{% url 'game_list' %}" class="launch-btn">В лобби</a>
     </div>
 </div>
 
@@ -34,13 +64,11 @@
   "questions": [
     {% for q in game.questions.all %}
     {
+      "id": {{ q.id }},
       "text": "{{ q.text|escapejs }}",
       "answers": [
         {% for a in q.answers.all %}
-        {
-          "text": "{{ a.text|escapejs }}",
-          "is_correct": {{ a.is_correct|yesno:"true,false" }}
-        }{% if not forloop.last %},{% endif %}
+        { "id": {{ a.id }}, "text": "{{ a.text|escapejs }}", "is_correct": {{ a.is_correct|yesno:"true,false" }} }{% if not forloop.last %},{% endif %}
         {% endfor %}
       ]
     }{% if not forloop.last %},{% endif %}
@@ -49,5 +77,10 @@
 }
 </script>
 
+<script>
+    window.gameId = "{{ game.id }}";
+    window.userName = "{{ request.user.username|escapejs }}";
+</script>
+<script src="{% static 'game/js/PlayGame.js' %}"></script>
 <script src="{% static 'game/js/PlayGame.js' %}"></script>
 {% endblock %}

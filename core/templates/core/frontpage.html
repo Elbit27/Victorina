@@ -15,12 +15,18 @@
             <h1>Битва интеллектов для вашего офиса</h1>
             <p>Создавайте викторины, разделяйте коллег на команды и узнайте, кто в вашей компании настоящий знаток.</p>
         <div class="cta-group">
-            {% if user.is_superuser or user.is_staff %}
-                <a href="{% url 'game_list' %}"  class="btn btn-primary">Играть</a>
-                <a href="#about" class="btn btn-secondary">Узнать больше</a>
-                <a href="{% url 'create_game' %}" class="btn btn-admin">Создать новую игру</a>
+            {% if user.is_authenticated %}
+                {% if user.is_superuser or user.is_staff %}
+                    <a href="{% url 'game_list' %}" class="btn btn-primary">Играть</a>
+                    <a href="#about" class="btn btn-secondary">Узнать больше</a>
+                    <a href="{% url 'create_game' %}" class="btn btn-admin">Создать новую игру</a>
+                {% else %}
+                    <a href="{% url 'game_list' %}" class="btn btn-primary">Играть</a>
+                    <a href="#about" class="btn btn-secondary">Узнать больше</a>
+                {% endif %}
             {% else %}
-                <a href="{% url 'game_list' %}" class="btn btn-primary">Играть</a>
+                <!-- НЕ авторизован -->
+                <a href="{% url 'login' %}?next={% url 'game_list' %}" class="btn btn-primary">Играть</a>
                 <a href="#about" class="btn btn-secondary">Узнать больше</a>
             {% endif %}
         </div>

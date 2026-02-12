@@ -5,3 +5,6 @@ djangorestframework
 dj-rest-auth
 django-filter
 gunicorn
+channels
+channels-redis
+daphne
