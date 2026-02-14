@@ -19,7 +19,8 @@ class GameConsumer(AsyncWebsocketConsumer):
                 'players': {},
                 'current_idx': 0,
                 'scores': {'A': 0, 'B': 0},
-                'blocked_teams': [],  # Команды, которые ответили неверно на текущий вопрос
+                'player_scores': {},  # Добавляем сюда для личного зачета
+                'blocked_teams': [],
                 'game_active': False
             }
 
@@ -61,40 +62,55 @@ class GameConsumer(AsyncWebsocketConsumer):
             state['scores'] = {'A': 0, 'B': 0}
             await self.channel_layer.group_send(self.room_group_name, {'type': 'game_start_broadcast'})
 
+
         elif action == 'submit_answer':
             if not state['game_active']: return
-
             user_team = state['players'][self.user.username]['team']
-
-            # Проверяем, не заблокирована ли команда
             if user_team in state['blocked_teams']:
-                return
-
+                if len(state['blocked_teams']) >= 2:
+                    state['blocked_teams'] = []  # Сбрасываем блокировку для всех
+                else:
+                    return  # Если вторая команда еще не ошибалась, блокировка для текущей в силе
             is_correct = data.get('is_correct')
-
             if is_correct:
-                # КТО ПЕРВЫЙ — ТОМУ ОЧКО
                 state['scores'][user_team] += 1
-                state['blocked_teams'] = []  # Сброс блоков для нового вопроса
+
+                # Увеличиваем личный счет игрока
+                username = self.user.username
+                state['player_scores'][username] = state['player_scores'].get(username, 0) + 1
+
+                state['blocked_teams'] = []
                 state['current_idx'] += 1
 
-                # Рассылаем всем команду на следующий вопрос
                 await self.channel_layer.group_send(self.room_group_name, {
                     'type': 'next_question_broadcast',
                     'winner_name': self.user.username,
                     'new_scores': state['scores'],
+                    'player_stats': state['player_scores'],  # Отправляем статистику всем
                     'new_idx': state['current_idx']
                 })
             else:
-                # НЕВЕРНО — блокируем всю команду для этого вопроса
+
+                # НЕВЕРНО
                 if user_team not in state['blocked_teams']:
                     state['blocked_teams'].append(user_team)
+
+                answer_text = data.get('answer_text')
+
+                # Проверяем, стали ли заблокированы все команды
+                is_everyone_blocked = len(state['blocked_teams']) >= 2
+
+                if is_everyone_blocked:
+                    state['blocked_teams'] = []  # Сбрасываем список на сервере
 
                 await self.channel_layer.group_send(self.room_group_name, {
                     'type': 'team_blocked_broadcast',
                     'team': user_team,
-                    'user': self.user.username
+                    'user': self.user.username,
+                    'wrong_answer': answer_text,
+                    'reset_all': is_everyone_blocked  # Передаем этот флаг фронтенду
                 })
+
 
     # Обработчики рассылок
     async def game_start_broadcast(self, event):
@@ -105,6 +121,7 @@ class GameConsumer(AsyncWebsocketConsumer):
             'type': 'NEXT_QUESTION',
             'new_idx': event['new_idx'],
             'scores': event['new_scores'],
+            'player_stats': event.get('player_stats', {}),  # <--- Обязательно добавьте это
             'last_winner': event['winner_name']
         }))
 
@@ -112,7 +129,14 @@ class GameConsumer(AsyncWebsocketConsumer):
         await self.send(text_data=json.dumps({
             'type': 'TEAM_BLOCKED',
             'team': event['team'],
-            'user': event['user']
+            'user': event['user'],
+            'wrong_answer': event.get('wrong_answer'),
+            'reset_all': event.get('reset_all', False)  # Принимаем флаг
+        }))
+
+    async def all_failed_broadcast(self, event):
+        await self.send(text_data=json.dumps({
+            'type': 'ALL_FAILED'
         }))
 
     async def room_update_message(self, event):

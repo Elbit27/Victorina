@@ -4,6 +4,7 @@ let questions = [];
 let myTeam = null;
 let currentIdx = 0;
 let canClick = true;
+let playerStats = {}; // Глобальная переменная для хранения очков игроков
 
 document.addEventListener('DOMContentLoaded', () => {
     // 1. Загрузка вопросов
@@ -42,26 +43,29 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (data.type === 'TEAM_BLOCKED') {
-            console.log(`Заблокирована команда: ${data.team}, Моя команда: ${myTeam}`);
-
-            // Если команда игрока еще не определена сервером, игнорируем блок
-            if (!myTeam) return;
+            const btns = document.querySelectorAll('.answer-btn');
+            btns.forEach(btn => {
+                if (btn.innerText === data.wrong_answer) {
+                    btn.disabled = true;
+                    btn.style.opacity = "0.2";
+                    btn.style.textDecoration = "line-through";
+                }
+            });
 
             if (String(data.team) === String(myTeam)) {
                 applyBlockVisuals();
             } else {
-                // Если мы в другой команде — снимаем визуальные эффекты и разрешаем клик
                 canClick = true;
                 const qText = document.getElementById('question-text');
                 if (qText) {
                     qText.innerText = "⭐ Соперник ошибся! Ваш шанс!";
                     qText.style.color = "green";
                 }
-                // Принудительно возвращаем кнопкам нормальный вид
-                const btns = document.querySelectorAll('.answer-btn');
                 btns.forEach(btn => {
-                    btn.style.opacity = "1";
-                    btn.style.filter = "none";
+                    if (!btn.disabled) {
+                        btn.style.opacity = "1";
+                        btn.style.filter = "none";
+                    }
                 });
             }
         }
@@ -74,6 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (data.type === 'NEXT_QUESTION') {
+            if (data.player_stats) playerStats = data.player_stats;
             currentIdx = data.new_idx;
             document.getElementById('score-a').innerText = data.scores.A;
             document.getElementById('score-b').innerText = data.scores.B;
@@ -90,7 +95,6 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     }
 });
-
 
 function renderQuestion() {
     const questionText = document.getElementById('question-text');
@@ -124,23 +128,21 @@ function renderQuestion() {
 function handleAnswer(selectedBtn, answer) {
     if (!canClick) return;
 
-    // Мы не ставим здесь canClick = false принудительно навсегда.
-    // Мы просто отправляем запрос.
     gameSocket.send(JSON.stringify({
         'action': 'submit_answer',
-        'is_correct': answer.is_correct
+        'is_correct': answer.is_correct,
+        'answer_text': answer.text
     }));
-
-    // Визуально подсветим, что нажали, но не блокируем всё управление сразу
-    selectedBtn.style.boxShadow = "0 0 10px yellow";
 }
 
 function applyBlockVisuals() {
     canClick = false;
     const btns = document.querySelectorAll('.answer-btn');
     btns.forEach(btn => {
-        btn.style.opacity = "0.3";
-        btn.style.filter = "grayscale(1)";
+        if (!btn.disabled) {
+            btn.style.opacity = "0.4";
+            btn.style.filter = "grayscale(0.8)";
+        }
     });
     const qText = document.getElementById('question-text');
     qText.innerText = "❌ Ваша команда ошиблась! Ждите...";
@@ -190,13 +192,51 @@ function updateLobbyUI(players) {
 function showResults() {
     document.getElementById('main-game-ui').style.display = 'none';
     const resultScreen = document.getElementById('result-screen');
-    if (resultScreen) {
-        resultScreen.style.display = 'block';
+    if (!resultScreen) return;
 
-        // Добавляем кнопку выхода, если её нет в HTML
-        resultScreen.innerHTML += `
-            <button onclick="location.reload()" class="btn-blue">Вернуться в лобби</button>
-            <a href="/" class="btn-blue" style="text-decoration:none; background: gray;">Выйти из игры</a>
-        `;
+    // Считаем финальный счет из элементов на странице
+    const scoreA = parseInt(document.getElementById('score-a').innerText) || 0;
+    const scoreB = parseInt(document.getElementById('score-b').innerText) || 0;
+
+    // Определяем текст победителя
+    let winnerText = "НИЧЬЯ!";
+    let winnerColor = "#666";
+    if (scoreA > scoreB) {
+        winnerText = "ПОБЕДА КОМАНДЫ А";
+        winnerColor = "#ff4d4d";
+    } else if (scoreB > scoreA) {
+        winnerText = "ПОБЕДА КОМАНДЫ Б";
+        winnerColor = "#4d79ff";
     }
+
+    // Превращаем объект статистики в массив и сортируем (от большего к меньшему)
+    const sortedPlayers = Object.entries(playerStats)
+        .sort(([, a], [, b]) => b - a);
+
+    resultScreen.style.display = 'block';
+    resultScreen.innerHTML = `
+        <div style="text-align: center; padding: 20px;">
+            <h1 style="color: ${winnerColor}; font-size: 3em; margin-bottom: 10px;">${winnerText}</h1>
+            <h2 style="margin-bottom: 30px;">Счет: ${scoreA} — ${scoreB}</h2>
+
+            <div style="background: #f9f9f9; border-radius: 15px; padding: 20px; max-width: 400px; margin: 0 auto; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                <h3 style="margin-bottom: 15px; border-bottom: 2px solid #ddd; padding-bottom: 10px;">Рейтинг игроков</h3>
+                <ul style="list-style: none; padding: 0;">
+                    ${sortedPlayers.map(([name, score], index) => `
+                        <li style="display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid #eee; ${index === 0 ? 'font-weight: bold; color: #d4af37;' : ''}">
+                            <span>${index + 1}. ${name} ${index === 0 ? '👑' : ''}</span>
+                            <span>${score} отв.</span>
+                        </li>
+                    `).join('')}
+                </ul>
+                    ${sortedPlayers.length === 0 ? '<p>Никто не успел ответить правильно</p>' : ''}
+            </div>
+
+            <div style="margin-top: 40px;">
+                <button onclick="location.reload()" class="btn-blue" style="padding: 15px 30px; font-size: 1.1em;">Вернуться в лобби</button>
+                <br><br>
+                <a href="/" style="color: #888; text-decoration: none;">Выйти в главное меню</a>
+            </div>
+        </div>
+    `;
 }
