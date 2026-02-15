@@ -1,9 +1,8 @@
-from django.shortcuts import render
-from django.views import generic
+from rest_framework import permissions
+from rest_framework.viewsets import ModelViewSet
+from . import serializers
 from .models import Game
-from .serializers import GameSerializer
-import json
-from django.http import JsonResponse
+from django.shortcuts import render, get_object_or_404
 
 def game_list(request):
     games = Game.objects.all()
@@ -14,29 +13,35 @@ def play_game(request, game_id):
     # Мы передаем игру, а вопросы подтянем через сериализатор или прямо в шаблоне
     return render(request, 'game/PlayGame.html', {'game': game})
 
-class GameCreateView(generic.CreateView):
-    template_name = 'game/CreateGame.html'
 
-    def get(self, request, *args, **kwargs):
-        return render(request, self.template_name)
 
-    def post(self, request, *args, **kwargs):
-        # Если данные пришли как JSON (от нашего Fetch)
-        if request.content_type == 'application/json':
-            try:
-                data = json.loads(request.body)
-                print("Received JSON data:", data)  # Теперь тут будет порядок
+# Эта функция НУЖНА для отображения страницы конструктора
+def game_manage_page(request, pk=None):
+    game = None
+    if pk:
+        # Важно подтянуть вопросы и ответы сразу (prefetch_related), чтобы не тормозило
+        game = get_object_or_404(Game.objects.prefetch_related('questions__answers'), pk=pk)
 
-                serializer = GameSerializer(data=data, context={'request': request})
+    return render(request, 'game/CreateUpdateGame.html', {'game': game})
 
-                if serializer.is_valid():
-                    game = serializer.save()
-                    # Возвращаем JSON с URL, куда перенаправить
-                    return JsonResponse({'status': 'success', 'redirect_url': '/'}, status=201)
-                else:
-                    return JsonResponse(serializer.errors, status=400)
-            except json.JSONDecodeError:
-                return JsonResponse({'error': 'Invalid JSON'}, status=400)
+class GameViewSet(ModelViewSet):
+    queryset = Game.objects.all()
 
-        # Если вдруг пришла обычная форма (fallback)
-        return super().post(request, *args, **kwargs)
+    def perform_create(self, serializer):
+        serializer.save(created_by=self.request.user)
+
+    def get_serializer_class(self):
+        if self.action == 'list':
+            return serializers.GameSerializer
+        elif self.action in ('create', 'update', 'partial_update'):
+            return serializers.GameSerializer
+        elif self.action in ('destroy', 'retrieve'):
+            return serializers.GameDetailSerializer
+
+    def get_permissions(self):
+        # удалять может только автор поста или админ
+        if self.action in ('update', 'partial_update', 'destroy'):
+            return [permissions.IsAdminUser(), ]
+        # просматривать могут все (list, retrive)
+        # создавать может только залогиненный пользователь
+        return [permissions.IsAuthenticatedOrReadOnly(), ]

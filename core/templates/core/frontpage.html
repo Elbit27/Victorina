@@ -17,16 +17,16 @@
         <div class="cta-group">
             {% if user.is_authenticated %}
                 {% if user.is_superuser or user.is_staff %}
-                    <a href="{% url 'game_list' %}" class="btn btn-primary">Играть</a>
+                    <a href="{% url 'game-list-html' %}" class="btn btn-primary">Играть</a>
                     <a href="#about" class="btn btn-secondary">Узнать больше</a>
-                    <a href="{% url 'create_game' %}" class="btn btn-admin">Создать новую игру</a>
+                    <a href="{% url 'game-create' %}" class="btn btn-admin">Создать новую игру</a>
                 {% else %}
-                    <a href="{% url 'game_list' %}" class="btn btn-primary">Играть</a>
+                    <a href="{% url 'game-list-html' %}" class="btn btn-primary">Играть</a>
                     <a href="#about" class="btn btn-secondary">Узнать больше</a>
                 {% endif %}
             {% else %}
                 <!-- НЕ авторизован -->
-                <a href="{% url 'login' %}?next={% url 'game_list' %}" class="btn btn-primary">Играть</a>
+                <a href="{% url 'login' %}?next={% url 'game-list' %}" class="btn btn-primary">Играть</a>
                 <a href="#about" class="btn btn-secondary">Узнать больше</a>
             {% endif %}
         </div>

@@ -55,7 +55,7 @@
             Команда Б: <span id="score-b">0</span>
         </div>
         <p id="final-score"></p>
-        <a href="{% url 'game_list' %}" class="launch-btn">В лобби</a>
+        <a href="{% url 'game-list-html' %}" class="launch-btn">В лобби</a>
     </div>
 </div>
 
@@ -81,6 +81,5 @@
     window.gameId = "{{ game.id }}";
     window.userName = "{{ request.user.username|escapejs }}";
 </script>
-<script src="{% static 'game/js/PlayGame.js' %}"></script>
 <script src="{% static 'game/js/PlayGame.js' %}"></script>
 {% endblock %}

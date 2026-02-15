@@ -1,0 +1,64 @@
+{% extends "core/base.html" %}
+{% csrf_token %}
+{% load static %}
+
+{% block title %}Создание Викторины{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'game/css/CreateUpdateGame.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container" style="max-width: 800px;">
+    <header class="dash-header">
+        <h1>Конструктор <span>Викторины</span></h1>
+    </header>
+
+    <div id="game-builder">
+        <div class="setup-card" style="margin-bottom: 20px;">
+            <label>Название викторины</label>
+            <input type="text" id="game-title" placeholder="Например: Знатоки Python" style="width: 100%; height: 50px; font-size: 18px; padding: 10px;">
+        </div>
+
+        <div id="questions-container">
+            </div>
+
+        <button type="button" class="btn-add" onclick="addQuestion()">+ Добавить вопрос</button>
+
+        <div class="form-footer">
+        <button id="submit-game" class="btn btn-primary">
+            {% if game %} Сохранить изменения {% else %} Создать викторину {% endif %}
+        </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    window.editGameData = {
+        {% if game %}
+            id: "{{ game.id }}",
+            title: "{{ game.title|escapejs }}",
+            questions: [
+                {% for question in game.questions.all %}
+                {
+                    text: "{{ question.text|escapejs }}",
+                    answers: [
+                        {% for answer in question.answers.all %}
+                        {
+                            text: "{{ answer.text|escapejs }}",
+                            is_correct: {{ answer.is_correct|yesno:"true,false" }}
+                        },
+                        {% endfor %}
+                    ]
+                },
+                {% endfor %}
+            ]
+        {% else %}
+            null
+        {% endif %}
+    };
+    console.log("Данные для редактора:", window.editGameData);
+</script>
+<script src="{% static 'game/js/CreateUpdateGame.js' %}"></script>
+
+{% endblock %}

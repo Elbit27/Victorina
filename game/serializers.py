@@ -1,10 +1,12 @@
 from rest_framework import serializers
-from .models import Question, Answer, Game
+from .models import Game, Question, Answer
+from django.db import transaction
+
 
 class AnswerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Answer
-        fields = ("id", "text", "is_correct")
+        fields = ['text', 'is_correct']
 
 
 class QuestionSerializer(serializers.ModelSerializer):
@@ -12,47 +14,48 @@ class QuestionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Question
-        fields = ("id", "text", "order", "answers")
+        fields = ['text', 'answers']
 
-    def validate_answers(self, answers):
-        correct = [a for a in answers if a.get("is_correct")]
-        if len(correct) != 1:
-            raise serializers.ValidationError(
-                "Должен быть ровно один правильный ответ"
-            )
-        return answers
-
-    def create(self, validated_data):
-        answers_data = validated_data.pop("answers")
-        question = Question.objects.create(**validated_data)
-
-        for answer_data in answers_data:
-            Answer.objects.create(question=question, **answer_data)
-
-        return question
 
 class GameSerializer(serializers.ModelSerializer):
-    owner_username = serializers.ReadOnlyField(source="owner.username")
-    questions = QuestionSerializer(many=True, required=False)
+    questions = QuestionSerializer(many=True)
 
     class Meta:
         model = Game
-        fields = ("id", "owner_username", "title", "questions")
+        fields = ['title', 'questions']
 
     def create(self, validated_data):
-        questions_data = validated_data.pop("questions", [])
-        game = Game.objects.create(
-            created_by=self.context["request"].user,
-            **validated_data
-        )
+        questions_data = validated_data.pop('questions')
+        # Создаем игру
+        game = Game.objects.create(**validated_data)
 
+        # Создаем вопросы и ответы
         for q_data in questions_data:
-            answers = q_data.pop("answers")
+            answers_data = q_data.pop('answers')
             question = Question.objects.create(game=game, **q_data)
-
-            for a in answers:
-                Answer.objects.create(question=question, **a)
-
+            for a_data in answers_data:
+                Answer.objects.create(question=question, **a_data)
         return game
 
+    def update(self, instance, validated_data):
+        questions_data = validated_data.pop('questions')
+        instance.title = validated_data.get('title', instance.title)
+        instance.save()
 
+        # Простой способ обновления вложенных данных:
+        # Удаляем старые вопросы и создаем новые
+        instance.questions.all().delete()
+        for question_data in questions_data:
+            answers_data = question_data.pop('answers')
+            question = Question.objects.create(game=instance, **question_data)
+            for answer_data in answers_data:
+                Answer.objects.create(question=question, **answer_data)
+
+        return instance
+
+class GameDetailSerializer(serializers.ModelSerializer):
+    created_by = serializers.ReadOnlyField(source='created_by.username')
+
+    class Meta:
+        model = Game
+        fields = '__all__'

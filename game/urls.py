@@ -1,8 +1,19 @@
-from django.urls import path
-from .views import GameCreateView, game_list, play_game
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from . import views
+
+router = DefaultRouter()
+router.register(r'games', views.GameViewSet, basename='game')
 
 urlpatterns = [
-    path('create_game/', GameCreateView.as_view(), name='create_game'),
-    path('game_list/', game_list, name='game_list'),
-    path('play_game/<int:game_id>/', play_game, name='play_game'),
+    # --- ТВОИ ШАБЛОНЫ (HTML) ---
+    # Когда ты перейдешь по /manage/, Django увидит этот путь ПЕРВЫМ и отдаст шаблон
+    path('manage/', views.game_manage_page, name='game-create'),
+    path('manage/<int:pk>/', views.game_manage_page, name='game-update'),
+
+    # Страница списка игр (если хочешь свой HTML, а не JSON список)
+    path('game_list/', views.game_list, name='game-list-html'),
+    path('play_game/<int:game_id>/', views.play_game, name='play_game'),
+
+    path('', include(router.urls)),
 ]
