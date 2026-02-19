@@ -12,6 +12,9 @@ SECRET_KEY = config('SECRET_KEY')
 DEBUG = config('DEBUG')
 
 ALLOWED_HOSTS = config('ALLOWED_HOSTS').split(",")
+CSRF_TRUSTED_ORIGINS = [
+    'https://victorina-i5vq.onrender.com',
+]
 
 
 # Application definition
