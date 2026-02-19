@@ -1,4 +1,8 @@
 let questionCount = 0;
+let gameId = null;
+if (window.editGameData && window.editGameData.id) {
+    gameId = window.editGameData.id;
+}
 
 document.addEventListener('DOMContentLoaded', () => {
     const container = document.getElementById('questions-container');
@@ -47,7 +51,7 @@ function addAnswer(btn, qId, listContainer = null, data = null) {
     const list = listContainer || btn.previousElementSibling;
     const aHtml = `
         <div class="answer-row d-flex align-items-center mb-2">
-            <input type="radio" name="correct-${qId}" class="is-correct me-2" ${data && data.is_correct ? 'checked' : ''}>
+            <input type="radio" name="correct-${qId}" class="is-correct me-2" ${data && data.is-correct ? 'checked' : ''}>
             <input type="text" class="a-text form-control form-control-sm me-2" placeholder="Ответ"
                    value="${data ? data.text : ''}">
             <span style="cursor:pointer" onclick="this.parentElement.remove()">×</span>
@@ -70,20 +74,17 @@ document.getElementById('submit-game').addEventListener('click', async function(
         qCard.querySelectorAll('.answer-row').forEach(aRow => {
             question.answers.push({
                 text: aRow.querySelector('.a-text').value,
-                is_correct: aRow.querySelector('.is-correct').checked
+                is-correct: aRow.querySelector('.is-correct').checked
             });
         });
         data.questions.push(question);
     });
 
-    const isEdit = window.editGameData !== null;
-
-    // Теперь это выглядит максимально чисто:
-    const url = isEdit ? `/game/games/${window.editGameData.id}/` : '/game/games/';
+    const isEdit = gameId !== null;
+    const url = isEdit ? `/game/games/${gameId}/` : '/game/games/';
     const method = isEdit ? 'PUT' : 'POST';
 
-    console.log(`Запрос отправляется на: ${url} методом ${method}`);
-
+    console.log(`Режим: ${isEdit ? 'Редактирование' : 'Создание'}, URL: ${url}`);
     try {
         const response = await fetch(url, {
             method: method,

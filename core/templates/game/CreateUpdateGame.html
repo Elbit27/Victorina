@@ -34,29 +34,27 @@
 </div>
 
 <script>
-    window.editGameData = {
-        {% if game %}
-            id: "{{ game.id }}",
-            title: "{{ game.title|escapejs }}",
-            questions: [
-                {% for question in game.questions.all %}
-                {
-                    text: "{{ question.text|escapejs }}",
-                    answers: [
-                        {% for answer in question.answers.all %}
-                        {
-                            text: "{{ answer.text|escapejs }}",
-                            is_correct: {{ answer.is_correct|yesno:"true,false" }}
-                        },
-                        {% endfor %}
-                    ]
-                },
-                {% endfor %}
-            ]
-        {% else %}
-            null
-        {% endif %}
-    };
+    // Если игра есть — создаем объект, если нет — просто записываем null
+    window.editGameData = {% if game %} {
+        id: "{{ game.id }}",
+        title: "{{ game.title|escapejs }}",
+        questions: [
+            {% for question in game.questions.all %}
+            {
+                text: "{{ question.text|escapejs }}",
+                answers: [
+                    {% for answer in question.answers.all %}
+                    {
+                        text: "{{ answer.text|escapejs }}",
+                        is_correct: {{ answer.is_correct|yesno:"true,false" }}
+                    }{% if not forloop.last %},{% endif %}
+                    {% endfor %}
+                ]
+            }{% if not forloop.last %},{% endif %}
+            {% endfor %}
+        ]
+    } {% else %} null {% endif %};
+
     console.log("Данные для редактора:", window.editGameData);
 </script>
 <script src="{% static 'game/js/CreateUpdateGame.js' %}"></script>
