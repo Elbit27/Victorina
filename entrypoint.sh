@@ -14,10 +14,10 @@ python manage.py shell << EOF
 import os
 from django.contrib.auth import get_user_model
 User = get_user_model()
-username = "admin"
+username = "admin27"
 password = os.environ.get("SUPERUSER_PASSWORD", "27")
 if not User.objects.filter(username=username).exists():
-    User.objects.create_superuser(username, "admin@example.com", password)
+    User.objects.create_superuser(username, "admin27@example.com", password)
     print(f"Superuser {username} created successfully.")
 else:
     print(f"Superuser {username} already exists.")
