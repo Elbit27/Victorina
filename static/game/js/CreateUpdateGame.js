@@ -74,7 +74,7 @@ document.getElementById('submit-game').addEventListener('click', async function(
         qCard.querySelectorAll('.answer-row').forEach(aRow => {
             question.answers.push({
                 text: aRow.querySelector('.a-text').value,
-                is-correct: aRow.querySelector('.is-correct').checked
+                is_correct: aRow.querySelector('.is-correct').checked
             });
         });
         data.questions.push(question);
