@@ -1,107 +1,159 @@
+/* Общие настройки для всей страницы */
 .landing-container {
+    width: 100%;
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 20px;
+    box-sizing: border-box;
+    overflow-x: hidden; /* Защита от горизонтального скролла */
 }
 
-/* Hero Section */
+/* Секция Hero - Главный экран */
 .hero {
     display: flex;
+    flex-direction: column; /* На мобилках - в колонку */
     align-items: center;
-    justify-content: space-between;
-    padding: 100px 0;
-    gap: 50px;
+    justify-content: center;
+    padding: 40px 0;
+    gap: 40px;
 }
 
 .hero-content {
-    flex: 1;
+    width: 100%;
+    text-align: center;
 }
 
 .hero h1 {
-    font-size: 3.5rem;
+    /* clamp(мин_размер, адаптивный_размер, макс_размер) */
+    font-size: clamp(1.8rem, 8vw, 3.5rem);
     line-height: 1.1;
     color: #1c1e21;
-    margin-bottom: 24px;
+    margin-bottom: 20px;
+    font-weight: 800;
 }
 
 .hero p {
-    font-size: 1.25rem;
+    font-size: clamp(1rem, 4vw, 1.25rem);
     color: #606770;
-    margin-bottom: 40px;
-    line-height: 1.6;
+    margin-bottom: 30px;
+    line-height: 1.5;
 }
 
-/* Кнопки */
-.btn {
-    padding: 16px 32px;
-    border-radius: 8px;
-    font-size: 1.1rem;
-    font-weight: bold;
+/* Кнопки CTA */
+.cta-group {
+    display: flex;
+    flex-direction: column; /* Кнопки друг под другом на телефоне */
+    gap: 15px;
+    width: 100%;
+    max-width: 400px; /* Чтобы кнопки не растягивались на весь экран */
+    margin: 0 auto;
+}
+
+.cta-group .btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px 24px;
+    border-radius: 12px;
+    font-weight: 700;
     text-decoration: none;
-    display: inline-block;
-    transition: 0.3s;
+    transition: transform 0.2s, background 0.2s;
+    font-size: 1.1rem;
 }
 
-.btn-primary {
-    background-color: #0866ff;
-    color: white;
+.btn-primary { background: #0866ff; color: white; }
+.btn-secondary { background: #ebedf0; color: #4b4f56; }
+.btn-admin { background: #38bdf8; color: white; }
+
+.cta-group .btn:hover {
+    transform: translateY(-2px);
 }
 
-.btn-secondary {
-    background-color: #ebedf0;
-    color: #4b4f56;
-    margin-left: 15px;
+/* Секция с картинкой/карточкой */
+.hero-image {
+    width: 100%;
+    display: flex;
+    justify-content: center;
 }
 
-.btn-admin {
-    background-color: ##0866ff;
-    color: #4b4f56;
-    margin-left: 15px;
-}
-
-/* Визуальный элемент (Demo Card) */
 .game-demo-card {
     background: white;
-    padding: 40px;
+    padding: 24px;
     border-radius: 20px;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
     border: 1px solid #dddfe2;
+    width: 100%;
+    max-width: 350px; /* Карточка не будет шире телефона */
+    box-sizing: border-box;
 }
 
 .team-vs {
-    font-size: 1.5rem;
-    font-weight: bold;
     display: flex;
-    gap: 20px;
     align-items: center;
+    justify-content: space-around; /* Равномерно распределяем команды */
+    font-size: 1.2rem;
+    font-weight: 800;
+    gap: 10px;
 }
 
-.vs { color: #f43f5e; font-style: italic; }
+.vs {
+    color: #f43f5e;
+    font-style: italic;
+    font-size: 0.9rem;
+}
 
-/* Секция особенностей */
+.t1, .t2 {
+    white-space: nowrap; /* Чтобы названия команд не разрывались */
+}
+
+/* Секция Почему выбирают Victorina (Features) */
 .features {
-    padding: 80px 0;
+    padding: 60px 0;
     text-align: center;
-    border-top: 1px solid #dadde1;
+}
+
+.features h2 {
+    font-size: clamp(1.5rem, 6vw, 2.5rem);
+    margin-bottom: 40px;
 }
 
 .features-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 40px;
-    margin-top: 50px;
+    grid-template-columns: 1fr; /* Одна колонка на мобилке */
+    gap: 30px;
 }
 
-.feature-item .icon {
-    font-size: 3rem;
-    margin-bottom: 20px;
+.feature-item {
+    padding: 20px;
 }
 
-.feature-item h3 {
-    font-size: 1.5rem;
-    margin-bottom: 12px;
-}
+.feature-item .icon { font-size: 3rem; margin-bottom: 15px; }
 
-.feature-item p {
-    color: #606770;
+/* АДАПТАЦИЯ ДЛЯ БОЛЬШИХ ЭКРАНОВ (ПК) */
+@media (min-width: 992px) {
+    .hero {
+        flex-direction: row; /* Текст и картинка в ряд */
+        text-align: left;
+        min-height: 80vh;
+    }
+
+    .hero-content {
+        text-align: left;
+        flex: 1;
+    }
+
+    .cta-group {
+        flex-direction: row; /* Кнопки в ряд */
+        max-width: none;
+        margin: 0;
+    }
+
+    .hero-image {
+        flex: 1;
+        justify-content: flex-end;
+    }
+
+    .features-grid {
+        grid-template-columns: repeat(3, 1fr); /* 3 колонки на ПК */
+    }
 }

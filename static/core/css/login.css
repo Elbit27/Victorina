@@ -1,4 +1,4 @@
-/* Контейнер-обертка на весь экран */
+/* Контейнер-обертка */
 .login-wrapper {
     background-color: #f0f2f5;
     width: 100%;
@@ -6,52 +6,58 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    padding-bottom: 100px; /* Смещение вверх как в оригинале */
+    padding: 20px 10px; /* Убрал жесткий padding-bottom 100px для мобилок */
 }
 
 .login-container {
     display: flex;
-    width: 980px;
+    flex-direction: column; /* На мобилках - столбиком */
+    width: 100%;
+    max-width: 980px; /* На ПК не шире 980px */
     justify-content: space-between;
     align-items: center;
 }
 
 /* ЛЕВАЯ КОЛОНКА */
 .brand-section {
-    width: 500px;
-    padding-right: 32px;
+    width: 100%;
+    max-width: 500px;
+    padding-right: 0;
+    text-align: center; /* Центрируем текст на мобилке */
+    margin-bottom: 40px;
 }
 
 .brand-logo {
     color: #0866ff;
-    font-size: 60px;
+    font-size: clamp(40px, 10vw, 60px); /* Уменьшается на маленьких экранах */
     font-weight: 800;
     margin: 0;
     letter-spacing: -2px;
 }
 
 .brand-tagline {
-    font-size: 28px;
-    line-height: 32px;
+    font-size: clamp(18px, 5vw, 28px); /* Гибкий размер шрифта */
+    line-height: 1.2;
     font-weight: normal;
     color: #1c1e21;
-    margin-top: 0;
+    margin-top: 10px;
 }
 
 /* ПРАВАЯ КОЛОНКА */
 .form-section {
-    width: 396px;
+    width: 100%;
+    max-width: 396px;
 }
 
 .login-card {
     background-color: #fff;
-    border: none;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, .1), 0 8px 16px rgba(0, 0, 0, .1);
     padding: 16px;
     text-align: center;
 }
 
+/* Поля ввода и кнопки */
 .input-group input {
     width: 100%;
     height: 52px;
@@ -60,13 +66,7 @@
     border: 1px solid #dddfe2;
     border-radius: 6px;
     margin-bottom: 12px;
-    outline: none;
     box-sizing: border-box;
-}
-
-.input-group input:focus {
-    border-color: #0866ff;
-    box-shadow: 0 0 0 2px #e7f3ff;
 }
 
 .login-btn {
@@ -78,40 +78,11 @@
     font-size: 20px;
     font-weight: 700;
     padding: 10px 0;
-    cursor: pointer;
     margin-top: 4px;
-}
-
-.login-btn:hover {
-    background-color: #075ce4;
-}
-
-.forgot-password {
-    display: block;
-    margin-top: 16px;
-    color: #0866ff;
-    font-size: 14px;
-    text-decoration: none;
-}
-
-.forgot-password:hover {
-    text-decoration: underline;
-}
-
-.form-divider {
-    border: 0;
-    border-top: 1px solid #dadde1;
-    margin: 20px 0;
-}
-
-.create-account-wrapper {
-    padding-top: 6px;
-    padding-bottom: 8px;
 }
 
 .create-account-btn {
     background-color: #42b72a;
-    border: none;
     border-radius: 6px;
     color: #fff;
     font-size: 17px;
@@ -122,12 +93,21 @@
     text-decoration: none;
 }
 
-.create-account-btn:hover {
-    background-color: #36a420;
-}
+/* --- ПЕРЕКЛЮЧЕНИЕ НА ГОРИЗОНТАЛЬНЫЙ ВИД ДЛЯ ПК --- */
+@media (min-width: 900px) {
+    .login-container {
+        flex-direction: row; /* В ряд */
+        align-items: flex-start;
+        padding-top: 60px;
+    }
 
-.footer-note {
-    margin-top: 28px;
-    font-size: 14px;
-    text-align: center;
+    .brand-section {
+        text-align: left;
+        padding-right: 32px;
+        margin-top: 40px;
+    }
+
+    .login-wrapper {
+        padding-bottom: 150px;
+    }
 }

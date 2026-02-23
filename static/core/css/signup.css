@@ -1,55 +1,61 @@
-/* Контейнер формы с эффектом глубины */
+/* Обертка для центрирования */
+.login-wrapper {
+    background-color: #f0f2f5;
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px 15px; /* Отступы, чтобы на мобилке не прилипало к краям */
+}
+
+/* Контейнер всей формы */
+.fb-form-container {
+    width: 100%;
+    max-width: 700px; /* На ПК будет 700px, на мобилке - на всю ширину */
+}
+
+/* Контейнер карточки с эффектом глубины */
 .fb-card {
     background: #ffffff;
-    border-radius: 20px; /* Более скругленные углы */
-    padding: 40px;
-
+    border-radius: 20px;
+    padding: 30px 20px; /* Уменьшил паддинги для мобилок */
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05),
                 0 20px 48px rgba(0, 0, 0, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.7);
-    width: 700px;
+    width: 100%; /* Занимает всю ширину родителя */
     margin: 0 auto;
+    box-sizing: border-box; /* Чтобы паддинги не увеличивали ширину */
 }
 
-/* Стили заголовка внутри карточки */
-.fb-card h2 {
-    font-family: 'Inter', sans-serif;
-    color: #1a1a1a;
-    font-weight: 700;
-    letter-spacing: -0.5px;
-}
-
-/* Улучшенные поля ввода */
+/* Поля ввода */
 .fb-card input {
     width: 100%;
-    height: 56px; /* Чуть выше для удобства */
+    height: 50px; /* Чуть ниже для мобилок */
     background: #f8fafc;
     border: 2px solid #f1f5f9;
     border-radius: 12px;
-    padding: 0 20px;
+    padding: 0 16px;
     font-size: 16px;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
     transition: all 0.3s ease;
-}
-
-/* Эффект при наведении и фокусе */
-.fb-card input:hover {
-    background: #f1f5f9;
+    box-sizing: border-box;
 }
 
 .fb-card input:focus {
     background: #ffffff;
     border-color: #0866ff;
     box-shadow: 0 0 0 4px rgba(8, 102, 255, 0.1);
-    transform: scale(1.01); /* Легкое увеличение при наборе текста */
+    outline: none;
 }
 
-/* Дизайнерская кнопка регистрации */
+/* Кнопка регистрации */
 .create-account-btn {
     background: linear-gradient(135deg, #42b72a 0%, #36a420 100%);
     color: white;
     border: none;
-    height: 56px;
+    height: 52px;
     border-radius: 12px;
     font-size: 18px;
     font-weight: 700;
@@ -64,35 +70,27 @@
 }
 
 .create-account-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(66, 183, 42, 0.4);
     filter: brightness(1.05);
 }
 
-.create-account-btn:active {
-    transform: translateY(0);
+/* Адаптация для десктопа */
+@media (min-width: 768px) {
+    .fb-card {
+        padding: 40px; /* Возвращаем просторные отступы на ПК */
+    }
+
+    .brand-logo {
+        font-size: 60px !important; /* Увеличиваем лого на ПК */
+    }
 }
 
-/* Разделитель */
-.form-divider {
-    border: 0;
-    height: 1px;
-    background: linear-gradient(to right, transparent, #e2e8f0, transparent);
-    margin: 25px 0;
-}
-
-/* Ссылка на вход */
-.login-link {
-    color: #64748b;
-    font-size: 15px;
-    text-decoration: none;
-    transition: color 0.2s;
-}
-
-.login-link b {
-    color: #0866ff;
-}
-
-.login-link:hover b {
-    text-decoration: underline;
+/* Стили ошибок */
+.error-box {
+    background: #ffebe8;
+    border: 1px solid #dd3c10;
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    color: #dd3c10;
+    font-size: 14px;
 }
