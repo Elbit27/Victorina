@@ -44,6 +44,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (data.type === 'TEAM_BLOCKED') {
             const btns = document.querySelectorAll('.answer-btn');
+            const statusMsg = document.getElementById('game-status-msg'); // Проверь, что этот ID есть в HTML!
+
             btns.forEach(btn => {
                 if (btn.innerText === data.wrong_answer) {
                     btn.disabled = true;
@@ -53,13 +55,13 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             if (String(data.team) === String(myTeam)) {
-                applyBlockVisuals();
+                applyBlockVisuals(); // Тут мы тоже поменяем логику ниже
             } else {
                 canClick = true;
-                const qText = document.getElementById('question-text');
-                if (qText) {
-                    qText.innerText = "⭐ Соперник ошибся! Ваш шанс!";
-                    qText.style.color = "green";
+                // ТЕПЕРЬ ТУТ НЕ qText, А statusMsg
+                if (statusMsg) {
+                    statusMsg.innerText = "⭐ Соперник ошибся! Ваш шанс!";
+                    statusMsg.style.color = "#28a745";
                 }
                 btns.forEach(btn => {
                     if (!btn.disabled) {
@@ -72,6 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (data.type === 'GAME_START') {
             currentIdx = 0;
+            playerStats = {};
             document.getElementById('lobby-screen').style.display = 'none';
             document.getElementById('main-game-ui').style.display = 'block';
             renderQuestion();
@@ -98,6 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function renderQuestion() {
     const questionText = document.getElementById('question-text');
+    const statusMsg = document.getElementById('game-status-msg');
     const answersGrid = document.getElementById('answers-grid');
 
     if (currentIdx >= questions.length) {
@@ -105,21 +109,19 @@ function renderQuestion() {
         return;
     }
 
-    canClick = true; // Разрешаем клик всем
+    canClick = true;
     const q = questions[currentIdx];
 
-    // СБРОС СТИЛЕЙ ТЕКСТА
+    // Очищаем всё старое
     questionText.innerText = q.text;
     questionText.style.color = "black";
+    if (statusMsg) statusMsg.innerText = ""; // Чистим надпись "Соперник ошибся"
 
     answersGrid.innerHTML = '';
-
     q.answers.forEach((ans) => {
         const btn = document.createElement('button');
         btn.className = 'answer-btn';
         btn.innerText = ans.text;
-        btn.style.opacity = "1"; // Сброс прозрачности
-        btn.style.filter = "none"; // Сброс серого фильтра
         btn.onclick = () => handleAnswer(btn, ans);
         answersGrid.appendChild(btn);
     });
@@ -138,15 +140,20 @@ function handleAnswer(selectedBtn, answer) {
 function applyBlockVisuals() {
     canClick = false;
     const btns = document.querySelectorAll('.answer-btn');
+    const statusMsg = document.getElementById('game-status-msg');
+
     btns.forEach(btn => {
         if (!btn.disabled) {
             btn.style.opacity = "0.4";
             btn.style.filter = "grayscale(0.8)";
         }
     });
-    const qText = document.getElementById('question-text');
-    qText.innerText = "❌ Ваша команда ошиблась! Ждите...";
-    qText.style.color = "red";
+
+    // Пишем в статус, а не в вопрос!
+    if (statusMsg) {
+        statusMsg.innerText = "❌ Ваша команда ошиблась! Ждите...";
+        statusMsg.style.color = "#dc3545";
+    }
 }
 
 function changeTeam(teamName) {

@@ -19,7 +19,7 @@ class GameConsumer(AsyncWebsocketConsumer):
                 'players': {},
                 'current_idx': 0,
                 'scores': {'A': 0, 'B': 0},
-                'player_scores': {},  # Добавляем сюда для личного зачета
+                'player_scores': {},
                 'blocked_teams': [],
                 'game_active': False
             }
@@ -60,8 +60,9 @@ class GameConsumer(AsyncWebsocketConsumer):
             state['game_active'] = True
             state['current_idx'] = 0
             state['scores'] = {'A': 0, 'B': 0}
-            await self.channel_layer.group_send(self.room_group_name, {'type': 'game_start_broadcast'})
+            state['player_scores'] = {}
 
+            await self.channel_layer.group_send(self.room_group_name, {'type': 'game_start_broadcast'})
 
         elif action == 'submit_answer':
             if not state['game_active']: return
