@@ -16,14 +16,8 @@
             <p>Создавайте викторины, разделяйте коллег на команды и узнайте, кто в вашей компании настоящий знаток.</p>
         <div class="cta-group">
             {% if user.is_authenticated %}
-                {% if user.is_superuser or user.is_staff %}
-                    <a href="{% url 'game-list-html' %}" class="btn btn-primary">Играть</a>
-                    <a href="#about" class="btn btn-secondary">Узнать больше</a>
-                    <a href="{% url 'game-create' %}" class="btn btn-admin">Создать новую игру</a>
-                {% else %}
-                    <a href="{% url 'game-list-html' %}" class="btn btn-primary">Играть</a>
-                    <a href="#about" class="btn btn-secondary">Узнать больше</a>
-                {% endif %}
+                <a href="{% url 'game-list-html' %}" class="btn btn-primary">Играть</a>
+                <a href="#about" class="btn btn-secondary">Узнать больше</a>
             {% else %}
                 <!-- НЕ авторизован -->
                 <a href="{% url 'login' %}?next={% url 'game-list-html' %}" class="btn btn-primary">Играть</a>

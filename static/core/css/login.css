@@ -111,3 +111,33 @@
         padding-bottom: 150px;
     }
 }
+
+/* Контейнер должен иметь ту же высоту, что и инпут без внешних отступов */
+.password-field {
+    position: relative;
+    display: flex; /* Добавляем flex */
+    align-items: center; /* Центрируем содержимое по вертикали */
+    width: 100%;
+    margin-bottom: 12px; /* Переносим отступ инпута сюда */
+}
+
+.password-field input {
+    margin-bottom: 0 !important; /* Убираем отступ у самого инпута, чтобы он не тянул контейнер вниз */
+    width: 100%;
+}
+
+.toggle-password-btn {
+    position: absolute;
+    right: 12px;
+    /* Убираем top: 50% и transform, так как flex в родителе сделает работу лучше */
+    background: none;
+    border: none;
+    padding: 0;
+    color: #606770;
+    cursor: pointer;
+    z-index: 5;
+    height: 100%; /* Растягиваем кнопку на всю высоту, чтобы область нажатия была больше */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

@@ -21,29 +21,55 @@
         <div class="form-section">
             <div class="login-card">
                 <form method="post" action="#"> {% csrf_token %}
+                    {% if form.non_field_errors %}
+                        <div class="error-summary" style="color: #f02849; background: #ffebe8; border: 1px solid #f02849; border-radius: 6px; padding: 10px; margin-bottom: 15px; font-size: 14px; text-align: left;">
+                            {% for error in form.non_field_errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
 
                     <div class="input-group">
-                        <input type="text" name="username" placeholder="Электронный адрес или номер телефона" required>
+                        <input type="text" name="username" placeholder="Имя пользователя" required>
                     </div>
 
-                    <div class="input-group">
-                        <input type="password" name="password" placeholder="Пароль" required>
+                    <div class="input-group password-field">
+                        <input type="password" name="password" id="id_password" placeholder="Пароль" required>
+                        <button type="button" id="togglePassword" class="toggle-password-btn">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z"/>
+                                <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z"/>
+                            </svg>
+                        </button>
                     </div>
 
                     <button type="submit" class="login-btn">Вход</button>
-
                     <a href="#" class="forgot-password">Забыли пароль?</a>
-
                     <hr class="form-divider">
-
                     <div class="create-account-wrapper">
                         <a href="{% url 'signup' %}" class="create-account-btn">Создать новый аккаунт</a>
                     </div>
                 </form>
             </div>
-            <p class="footer-note"><b>Создать Страницу</b> знаменитости, музыкальной группы или компании.</p>
         </div>
-
     </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const togglePassword = document.querySelector('#togglePassword');
+        const passwordInput = document.querySelector('#id_password');
+
+        togglePassword.addEventListener('click', function () {
+            // Переключаем тип поля
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+
+            // Меняем цвет иконки (синий если пароль виден)
+            this.style.color = type === 'text' ? '#0866ff' : '#606770';
+        });
+    });
+</script>
 {% endblock %}

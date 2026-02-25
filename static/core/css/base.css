@@ -1,113 +1,77 @@
-/* 1. ПЕРЕМЕННЫЕ — чтобы легко менять цвета во всем проекте сразу */
-:root {
-    --primary-blue: #0866ff;
-    --primary-red: #f43f5e;
-    --primary-green: #42b72a;
-    --bg-light: #f0f2f5;
-    --bg-white: #ffffff;
-    --text-dark: #1c1e21;
-    --text-gray: #606770;
-    --border-color: #dddfe2;
-    --shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 8px 16px rgba(0, 0, 0, 0.1);
+/* --- НАВИГАЦИЯ --- */
+
+/* Убираем обводку у бургера */
+.navbar-toggler:focus {
+    box-shadow: none;
+    outline: none;
 }
 
-/* 2. ГЛОБАЛЬНЫЙ СБРОС */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    font-family: 'Segoe UI', Helvetica, Arial, sans-serif;
-    background-color: var(--bg-light);
-    color: var(--text-dark);
-    line-height: 1.34;
-    min-height: 100vh;
+/* Круглый аватар пользователя */
+.avatar-circle {
+    width: 32px;
+    height: 32px;
+    background-color: #38bdf8;
+    color: #1c1e21;
+    border-radius: 50%;
     display: flex;
-    flex-direction: column;
-}
-
-/* 3. ШАПКА (NAVBAR) */
-.navbar {
-    background-color: var(--bg-white);
-    height: 60px;
-    display: flex;
-    justify-content: space-between;
     align-items: center;
-    padding: 0 20px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.08);
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-}
-
-.navbar .logo {
-    color: var(--primary-blue);
-    font-size: 24px;
-    font-weight: bold;
-    text-decoration: none;
-    letter-spacing: -1px;
-}
-
-.nav-links a {
-    text-decoration: none;
-    color: var(--text-gray);
-    margin-left: 20px;
-    font-weight: 600;
-    font-size: 15px;
-}
-
-.nav-links a:hover {
-    color: var(--primary-blue);
-}
-
-/* 4. ОСНОВНОЙ КОНТЕНТ */
-main {
-    flex: 1; /* Чтобы футер всегда был внизу, если контента мало */
-    display: flex;
     justify-content: center;
-    padding: 40px 20px;
-}
-
-/* 5. ОБЩИЕ СТИЛИ КНОПОК */
-.btn {
-    border: none;
-    border-radius: 6px;
-    padding: 10px 20px;
-    font-size: 16px;
     font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.2s, transform 0.1s;
-    text-decoration: none;
-    display: inline-block;
-    text-align: center;
+    font-size: 14px;
 }
 
-.btn:active {
-    transform: scale(0.98);
+/* Кнопка "Создать игру" (Цвет 38bdf8) */
+.nav-create-btn {
+    color: #38bdf8 !important;
+    font-weight: 700 !important;
 }
 
-.btn-blue {
-    background-color: var(--primary-blue);
-    color: white;
+.nav-create-btn:hover {
+    color: #7dd3fc !important;
+    background-color: rgba(56, 189, 248, 0.1) !important;
 }
 
-.btn-blue:hover { background-color: #075ce4; }
-
-.btn-green {
-    background-color: var(--primary-green);
-    color: white;
+/* Кнопка "Выйти" (Серый цвет) */
+.nav-logout-btn {
+    color: #9ca3af !important;
 }
 
-.btn-green:hover { background-color: #36a420; }
+.nav-logout-btn:hover {
+    color: #f3f4f6 !important;
+    background-color: rgba(255, 255, 255, 0.05) !important;
+}
 
-/* 6. ПОДВАЛ (FOOTER) */
+/* Настройки выпадающего меню на ПК */
+.dropdown-menu-dark {
+    border: 1px solid #444;
+    border-radius: 12px;
+    margin-top: 8px !important;
+}
+
+/* Адаптация под мобильные устройства */
+@media (max-width: 991px) {
+    .offcanvas {
+        width: 280px !important;
+    }
+
+    .offcanvas-body .nav-link {
+        font-size: 1.1rem;
+        padding: 15px 10px !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+}
+
+/* Эффект наведения на обычные ссылки */
+.navbar-nav .nav-link:hover:not(.nav-create-btn):not(.nav-logout-btn) {
+    color: #38bdf8 !important;
+}
+
+/* --- ПОДВАЛ (FOOTER) --- */
 .main-footer {
-    background-color: var(--bg-white);
+    background-color: #ffffff;
     padding: 20px;
     text-align: center;
-    color: var(--text-gray);
+    color: #6b7280;
     font-size: 14px;
-    border-top: 1px solid var(--border-color);
+    border-top: 1px solid #e5e7eb;
 }
