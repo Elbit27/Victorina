@@ -60,7 +60,6 @@ TEMPLATES = [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
-                'django.template.context_processors.request',  # <- важно для allauth
                 'django.contrib.messages.context_processors.messages',
                 # 'notification.context_processors.notifications_processor',
             ],
@@ -83,6 +82,7 @@ DATABASES = {
         'PASSWORD': config('DB_PASSWORD'),
         'HOST': config('DB_HOST'),
         'PORT': config('DB_PORT'),
+        'CONN_MAX_AGE': 60,
     }
 }
 
@@ -117,7 +117,7 @@ USE_I18N = True
 
 USE_TZ = True
 
-STATIC_URL = '/static/'
+STATIC_URL = '/staticfiles/'
 
 STATICFILES_DIRS = [
     BASE_DIR / "static",
@@ -125,7 +125,6 @@ STATICFILES_DIRS = [
 
 STATIC_ROOT = BASE_DIR / "staticfiles"  # для collectstatic
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-
 
 
 MEDIA_URL = 'media/'
@@ -163,3 +162,5 @@ CHANNEL_LAYERS = {
         },
     },
 }
+
+WHITENOISE_AUTOREFRESH = False
