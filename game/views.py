@@ -35,12 +35,11 @@ class GameViewSet(ModelViewSet):
         serializer.save(created_by=self.request.user)
 
     def get_serializer_class(self):
-        if self.action == 'list':
-            return serializers.GameSerializer
-        elif self.action in ('create', 'update', 'partial_update', 'generate_ai'):
-            return serializers.GameSerializer
+        if self.action == 'generate_ai':
+            return serializers.AIGenerateSerializer
         elif self.action in ('destroy', 'retrieve'):
             return serializers.GameDetailSerializer
+        return serializers.GameSerializer
 
     def get_permissions(self):
         # удалять может только автор поста или админ
@@ -50,26 +49,32 @@ class GameViewSet(ModelViewSet):
 
     @action(detail=False, methods=['post', 'get'], permission_classes=[permissions.IsAuthenticated])
     def generate_ai(self, request):
-        topic = request.data.get('topic')
-        if not topic:
-            return Response({"error": "Укажите тему (topic)"}, status=400)
+        if request.method == 'GET':
+            return Response({"message": "Введите тему и количество вопросов"})
+
+        input_serializer = serializers.AIGenerateSerializer(data=request.data)
+        if not input_serializer.is_valid():
+            return Response(input_serializer.errors, status=400)
+
+        topic = input_serializer.validated_data.get('topic')
+        count = input_serializer.validated_data.get('count')
 
         try:
-            ai_data = generate_quiz_data(topic)
+            ai_data = generate_quiz_data(topic, count=count)
             print(f"DEBUG AI DATA: {ai_data}")
 
-            serializer = self.get_serializer(
+            save_serializer = serializers.GameSerializer(
                 data=ai_data,
                 context={'request': request}
             )
 
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data, status=201)
+            if save_serializer.is_valid():
+                save_serializer.save()
+                return Response(save_serializer.data, status=201)
 
             return Response({
-                "error": "ИИ создал некорректные данные",
-                "details": serializer.errors
+                "error": "ИИ создал данные, которые не подходят для GameSerializer",
+                "details": save_serializer.errors
             }, status=400)
 
         except Exception as e:

@@ -63,3 +63,19 @@ class GameDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Game
         fields = '__all__'
+
+
+class AIGenerateSerializer(serializers.Serializer):
+    # Эти поля появятся в интерфейсе DRF как текстовое поле и число
+    topic = serializers.CharField(
+        max_length=255,
+        required=True,
+        label="Тема викторины",
+        help_text="Например: История Древнего Рима"
+    )
+    count = serializers.IntegerField(
+        default=5,
+        min_value=1,
+        max_value=20,
+        label="Количество вопросов"
+    )

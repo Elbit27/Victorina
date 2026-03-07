@@ -1,14 +1,15 @@
 from google import genai
+from config import settings
 import json
 import re
-RAW_KEY = "AIzaSyArx9S2FlcxBlteM5FvJ8_VD4jHR4HM3lE"
+RAW_KEY = settings.GEMINI_API_KEY
 CLEAN_KEY = re.sub(r'[^a-zA-Z0-9_\-]', '', RAW_KEY)
 
 # Создаем клиент
 client = genai.Client(api_key=CLEAN_KEY)
 
 
-def generate_quiz_data(topic, count=5):
+def generate_quiz_data(topic, count):
     prompt = f"""
         Create a quiz about "{topic}" with {count} questions.
         RETURN ONLY JSON. 
