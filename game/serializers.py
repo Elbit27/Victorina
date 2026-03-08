@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import Game, Question, Answer
-
+import json
 
 class AnswerSerializer(serializers.ModelSerializer):
     class Meta:
@@ -13,31 +13,72 @@ class QuestionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Question
-        fields = ['text', 'answers']
+        fields = ['text', 'image', 'answers']
 
 
 class GameSerializer(serializers.ModelSerializer):
-    questions = QuestionSerializer(many=True)
+    # Добавляем required=False, чтобы валидатор не ругался раньше времени
+    questions = QuestionSerializer(many=True, required=False)
 
     class Meta:
         model = Game
         fields = ['id', 'title', 'questions']
 
+    def to_internal_value(self, data):
+        # Нам нужно превратить QueryDict в обычный dict, если это FormData
+        if hasattr(data, 'dict'):
+            data = data.dict()
+
+        questions_json = data.get('questions_json')
+
+        if questions_json:
+            try:
+                # Если пришла строка, парсим её
+                if isinstance(questions_json, str):
+                    decoded_questions = json.loads(questions_json)
+                else:
+                    decoded_questions = questions_json
+
+                # Создаем копию, чтобы не менять оригинальный запрос
+                mutable_data = data.copy()
+                mutable_data['questions'] = decoded_questions
+
+                # Теперь вызываем супер-метод с УЖЕ подставленными вопросами
+                return super().to_internal_value(mutable_data)
+            except (json.JSONDecodeError, TypeError):
+                raise serializers.ValidationError({"questions_json": "Invalid JSON format"})
+
+        return super().to_internal_value(data)
+
     def create(self, validated_data):
-        questions_data = validated_data.pop('questions')
-
-        # Защита: если request почему-то не пришел, берем None
         request = self.context.get('request')
-        user = request.user if request else None
+        # ВАЖНО: берем вопросы из validated_data, если они там есть после to_internal_value
+        questions_data = validated_data.pop('questions', [])
 
-        game = Game.objects.create(created_by=user, **validated_data)
+        # Если validated_data пуст (например, пришел только JSON строку),
+        # пробуем достать напрямую из request
+        if not questions_data and request:
+            raw_q = request.data.get('questions_json')
+            if raw_q:
+                questions_data = json.loads(raw_q) if isinstance(raw_q, str) else raw_q
 
-        for q_data in questions_data:
-            # Извлекаем ответы из данных вопроса
-            answers_data = q_data.pop('answers')
-            question = Question.objects.create(game=game, **q_data)
+        game = Game.objects.create(
+            title=validated_data.get('title', 'Новая игра'),
+            created_by=request.user if request else None
+        )
 
-            # Создаем объекты ответов
+        for index, q_data in enumerate(questions_data):
+            # Картинка ищется в FILES
+            image_file = request.FILES.get(f'image_{index}') if request else None
+
+            question = Question.objects.create(
+                game=game,
+                text=q_data.get('text'),
+                image=image_file
+            )
+
+            # Ответы могут быть в q_data['answers']
+            answers_data = q_data.get('answers', [])
             for a_data in answers_data:
                 Answer.objects.create(question=question, **a_data)
 

@@ -11,88 +11,123 @@ document.addEventListener('DOMContentLoaded', () => {
     if (window.editGameData) {
         document.getElementById('game-title').value = window.editGameData.title;
         submitBtn.innerText = "Сохранить изменения";
-
         container.innerHTML = '';
         window.editGameData.questions.forEach(q => addQuestion(q));
     } else {
-        addQuestion(); // Очистка контейнера, чтобы вопросы не дублировались при обновлении страницы.
+        addQuestion();
     }
 });
 
 function addQuestion(data = null) {
     questionCount++;
+    const qId = questionCount;
     const container = document.getElementById('questions-container');
 
     const qHtml = `
-        <div class="question-card border p-3 mb-3" id="q-${questionCount}">
-            <div class="d-flex justify-content-between">
+        <div class="question-card" id="q-${qId}" data-id="${qId}" style="border: 1px solid #ddd; padding: 15px; margin-bottom: 20px; border-radius: 10px; background: #f9f9f9;">
+            <div class="d-flex justify-content-between" style='height:2pc'>
                 <strong>Вопрос №${questionCount}</strong>
                 <span class="text-danger" style="cursor:pointer" onclick="document.getElementById('q-${questionCount}').remove()">Удалить</span>
             </div>
-            <input type="text" class="q-text form-control mt-2" placeholder="Текст вопроса"
+            <input type="text" class="q-text form-control mb-2" placeholder="Текст вопроса"
                    value="${data ? data.text : ''}">
-            <div class="answers-list mt-3"></div>
-            <button type="button" class="btn btn-sm btn-link p-0 mt-2"
-                    onclick="addAnswer(this, ${questionCount})">+ Добавить ответ</button>
-        </div>`;
+
+
+            <div class="image-upload-section" style="margin-top: 10px;">
+                <label>Изображение (необязательно):</label>
+                <input type="file" class="question-image form-control" accept="image/*" onchange="previewImage(this)">
+                <div class="image-preview" style="margin-top: 5px; display: ${data && data.image ? 'block' : 'none'};">
+                    <img src="${data && data.image ? data.image : ''}" style="max-width: 150px; border-radius: 8px;">
+                </div>
+            </div>
+
+            <div class="answers-section mt-3">
+                <h6>Варианты ответов:</h6>
+                <div class="answers-list"></div>
+                <button type="button" class="btn btn-sm btn-outline-secondary mt-2" onclick="addAnswer(this, ${qId})">+ Добавить ответ</button>
+            </div>
+        </div>
+    `;
 
     container.insertAdjacentHTML('beforeend', qHtml);
-    const answersList = document.getElementById(`q-${questionCount}`).querySelector('.answers-list');
+    const currentCard = document.getElementById(`q-${qId}`);
+    const answersList = currentCard.querySelector('.answers-list');
 
     if (data && data.answers) {
-        data.answers.forEach(ans => addAnswer(null, questionCount, answersList, ans));
+        data.answers.forEach(ans => addAnswer(null, qId, answersList, ans));
     } else {
-        addAnswer(null, questionCount, answersList);
-        addAnswer(null, questionCount, answersList);
+        addAnswer(null, qId, answersList);
+        addAnswer(null, qId, answersList);
     }
 }
 
 function addAnswer(btn, qId, listContainer = null, data = null) {
-    const list = listContainer || btn.previousElementSibling;
+    // Исправленный поиск контейнера: ищем именно .answers-list
+    const list = listContainer || btn.parentElement.querySelector('.answers-list');
+
     const aHtml = `
         <div class="answer-row d-flex align-items-center mb-2">
-            <input type="radio" name="correct-${qId}" class="is-correct me-2" ${data && data.is-correct ? 'checked' : ''}>
+            <input type="radio" name="correct-${qId}" class="is-correct me-2" ${data && data.is_correct ? 'checked' : ''}>
             <input type="text" class="a-text form-control form-control-sm me-2" placeholder="Ответ"
                    value="${data ? data.text : ''}">
-            <span style="cursor:pointer" onclick="this.parentElement.remove()">×</span>
+            <span style="cursor:pointer; color:red; font-weight:bold;" onclick="this.parentElement.remove()">×</span>
         </div>`;
     list.insertAdjacentHTML('beforeend', aHtml);
 }
 
-// Creating a new game functionality
 document.getElementById('submit-game').addEventListener('click', async function() {
-    const data = {
-        title: document.getElementById('game-title').value,
-        questions: []
-    };
+    const formData = new FormData();
+    const title = document.getElementById('game-title').value;
 
-    document.querySelectorAll('.question-card').forEach((qCard) => {
-        const question = {
-            text: qCard.querySelector('.q-text').value,
-            answers: []
-        };
+    if (!title) {
+        alert("Пожалуйста, введите название викторины");
+        return;
+    }
+
+    formData.append('title', title);
+    const questionsData = [];
+
+    document.querySelectorAll('.question-card').forEach((qCard, qIndex) => {
+        // ИСПОЛЬЗУЕМ .q-text (как в шаблоне addQuestion)
+        const qTextInput = qCard.querySelector('.q-text');
+        if (!qTextInput) return;
+
+        const answers = [];
         qCard.querySelectorAll('.answer-row').forEach(aRow => {
-            question.answers.push({
-                text: aRow.querySelector('.a-text').value,
-                is_correct: aRow.querySelector('.is-correct').checked
-            });
+            const aTextInput = aRow.querySelector('.a-text');
+            const isCorrectInput = aRow.querySelector('.is-correct');
+            if (aTextInput) {
+                answers.push({
+                    text: aTextInput.value,
+                    is_correct: isCorrectInput.checked
+                });
+            }
         });
-        data.questions.push(question);
+
+        questionsData.push({
+            text: qTextInput.value,
+            answers: answers
+        });
+
+        const imageInput = qCard.querySelector('.question-image');
+        if (imageInput && imageInput.files[0]) {
+            formData.append(`image_${qIndex}`, imageInput.files[0]);
+        }
     });
 
+    formData.append('questions_json', JSON.stringify(questionsData));
+
     const isEdit = gameId !== null;
-    const url = isEdit ? `/game/games/${gameId}/` : '/game/games/';
+    const url = isEdit ? `/game/${gameId}/` : '/game/';
     const method = isEdit ? 'PUT' : 'POST';
 
-    console.log(`Режим: ${isEdit ? 'Редактирование' : 'Создание'}, URL: ${url}`);
     try {
         const response = await fetch(url, {
             method: method,
             headers: {
-                'Content-Type': 'application/json',
                 'X-CSRFToken': getCookie('csrftoken')
             },
-            body: JSON.stringify(data)
+            body: formData
         });
 
         if (response.ok) {
@@ -102,7 +137,7 @@ document.getElementById('submit-game').addEventListener('click', async function(
             alert("Ошибка: " + JSON.stringify(err));
         }
     } catch (e) {
-        console.error(e);
+        console.error("Ошибка при отправке:", e);
     }
 });
 
@@ -119,4 +154,20 @@ function getCookie(name) {
         }
     }
     return cookieValue;
+}
+
+function previewImage(input) {
+    const previewDiv = input.nextElementSibling;
+    const img = previewDiv.querySelector('img');
+
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            img.src = e.target.result;
+            previewDiv.style.display = 'block';
+        };
+        reader.readAsDataURL(input.files[0]);
+    } else {
+        previewDiv.style.display = 'none';
+    }
 }

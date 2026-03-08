@@ -9,3 +9,4 @@ channels
 channels-redis
 daphne
 whitenoise
+Pillow

@@ -103,6 +103,7 @@ function renderQuestion() {
     const questionText = document.getElementById('question-text');
     const statusMsg = document.getElementById('game-status-msg');
     const answersGrid = document.getElementById('answers-grid');
+    let imageContainer = document.getElementById('question-image-container');
 
     if (currentIdx >= questions.length) {
         showResults();
@@ -116,6 +117,21 @@ function renderQuestion() {
     questionText.innerText = q.text;
     questionText.style.color = "black";
     if (statusMsg) statusMsg.innerText = ""; // Чистим надпись "Соперник ошибся"
+
+    if (imageContainer) {
+        if (q.image) {
+            // Если в JSON пришел относительный путь, Django обычно отдает его от корня или с медиа
+            // Убедись, что q.image содержит правильный URL
+            imageContainer.innerHTML = `
+                <img src="${q.image}"
+                     style="max-width: 100%; max-height: 300px; border-radius: 15px; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); display: block; margin-left: auto; margin-right: auto;">
+            `;
+            imageContainer.style.display = 'block';
+        } else {
+            imageContainer.innerHTML = '';
+            imageContainer.style.display = 'none';
+        }
+    }
 
     answersGrid.innerHTML = '';
     q.answers.forEach((ans) => {

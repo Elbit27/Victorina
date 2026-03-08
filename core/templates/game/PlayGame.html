@@ -40,10 +40,10 @@
         <div class="progress-container">
             <div id="progress-bar" class="progress-bar"></div>
         </div>
+        <div id="question-image-container" style="display: none;"></div>
         <div id="game-screen" class="question-box">
             <div id="progress" class="question-number">...</div>
             <h2 id="question-text">Приготовьтесь...</h2>
-
             <div id="game-status-msg" class="status-msg"></div>
 
             <div id="answers-grid" class="answers-grid"></div>
@@ -69,6 +69,7 @@
     {
       "id": {{ q.id }},
       "text": "{{ q.text|escapejs }}",
+      "image": "{% if q.image %}{{ q.image.url }}{% endif %}",
       "answers": [
         {% for a in q.answers.all %}
         { "id": {{ a.id }}, "text": "{{ a.text|escapejs }}", "is_correct": {{ a.is_correct|yesno:"true,false" }} }{% if not forloop.last %},{% endif %}

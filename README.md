@@ -18,3 +18,8 @@ Forgot to mention, I've deployed this website by using render. Sooo, here is the
 
 Now, at this commit I am going to fix some bugs - error representations, back_to_lobby issue, edit front
 
+
+
+Mar 8
+Last commits say that I added 
+

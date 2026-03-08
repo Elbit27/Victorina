@@ -23,7 +23,7 @@ class Question(models.Model):
         related_name="questions"
     )
     text = models.TextField()
-    order = models.PositiveIntegerField(default=1)
+    image = models.ImageField(upload_to='questions/', blank=True, null=True)
 
     def __str__(self):
         return self.text[:50]
