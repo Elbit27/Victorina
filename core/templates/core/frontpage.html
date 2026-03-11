@@ -20,7 +20,7 @@
                 <a href="#about" class="btn btn-secondary">Узнать больше</a>
             {% else %}
                 <!-- НЕ авторизован -->
-                <a href="{% url 'login' %}?next={% url 'game-list-html' %}" class="btn btn-primary">Играть</a>
+                <a href="{% url 'account_login' %}?next={% url 'game-list-html' %}" class="btn btn-primary">Играть</a>
                 <a href="#about" class="btn btn-secondary">Узнать больше</a>
             {% endif %}
         </div>

@@ -12,9 +12,9 @@ def custom_logout(request):
 
 
 urlpatterns = [
-    path('signup/', AuthenticationMethods.signup, name='signup'),
-    path('login/', AuthenticationMethods.LoginView.as_view(), name='login'),
-    path('logout/', custom_logout, name='logout'),
+    path('signup/', AuthenticationMethods.signup, name='account_signup'),
+    path('login/', AuthenticationMethods.LoginView.as_view(), name='account_login'),
+    path('logout/', custom_logout, name='account_logout'),
     # path('profile/', views.UserProfileView.as_view(), name='user-profile'),
     # path('profile/<int:pk>/', views.UserProfileView.as_view(), name='user-detail'),
     # path('profile/info/', views.add_info, name='add-info'),

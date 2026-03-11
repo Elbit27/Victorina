@@ -30,7 +30,7 @@
             <p class="subtitle">Это быстро и легко.</p>
             <hr class="form-divider">
 
-            <form method="post" action="{% url 'signup' %}">
+            <form method="post" action="{% url 'account_login' %}">
                 {% csrf_token %}
 
                 <div class="input-group">
@@ -73,7 +73,7 @@
             </form>
 
             <div class="login-link">
-                <a href="{% url 'login' %}">Уже есть аккаунт?</a>
+                <a href="{% url 'account_login' %}">Уже есть аккаунт?</a>
             </div>
         </div>
     </div>

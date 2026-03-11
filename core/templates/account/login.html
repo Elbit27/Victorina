@@ -1,5 +1,6 @@
 {% extends "core/base.html" %}
 {% load static %}
+{% load socialaccount %}
 
 {% block title %}Вход в Victorina{% endblock %}
 
@@ -20,7 +21,7 @@
 
         <div class="form-section">
             <div class="login-card">
-                <form method="post" action="#"> {% csrf_token %}
+                <form method="post" action="{% url 'account_login' %}"> {% csrf_token %}
                     {% if form.non_field_errors %}
                         <div class="error-summary" style="color: #f02849; background: #ffebe8; border: 1px solid #f02849; border-radius: 6px; padding: 10px; margin-bottom: 15px; font-size: 14px; text-align: left;">
                             {% for error in form.non_field_errors %}
@@ -44,10 +45,13 @@
                     </div>
 
                     <button type="submit" class="login-btn">Вход</button>
-                    <a href="#" class="forgot-password">Забыли пароль?</a>
+                    <div class="login-helpers">
+                        <a href="#" class="helper-link">Забыли пароль?</a>
+                        <a href="{% url 'account_signup' %}" class="helper-link">Регистрация</a>
+                    </div>
                     <hr class="form-divider">
                     <div class="create-account-wrapper">
-                        <a href="{% url 'signup' %}" class="create-account-btn">Создать новый аккаунт</a>
+                        <a href="{% provider_login_url 'google' %}" class="create-account-btn">Войти через Google</a>
                     </div>
                 </form>
             </div>

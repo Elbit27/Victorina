@@ -17,10 +17,17 @@ CSRF_TRUSTED_ORIGINS = [
     'https://victorina-i5vq.onrender.com',
 ]
 
-
+SITE_ID = 1
 # Application definition
 INSTALLED_APPS = [
-    'daphne',  # Обязательно в самый верх!
+    'daphne',
+
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -32,7 +39,6 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'dj_rest_auth',
     # my_apps
-    'account',
     'core',
     'game',
     'channels'
@@ -47,6 +53,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
 ]
 
 ROOT_URLCONF = 'config.urls'

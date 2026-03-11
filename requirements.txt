@@ -10,3 +10,4 @@ channels-redis
 daphne
 whitenoise
 Pillow
+django-allauth

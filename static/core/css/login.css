@@ -141,3 +141,20 @@
     align-items: center;
     justify-content: center;
 }
+
+.login-helpers {
+    display: flex;
+    justify-content: space-between; /* Расталкивает по краям */
+    margin-top: 15px;
+    margin-bottom: 5px;
+}
+
+.helper-link {
+    font-size: 14px;
+    color: #606770; /* Тот самый серый цвет Facebook */
+    text-decoration: none;
+}
+
+.helper-link:hover {
+    text-decoration: underline;
+}

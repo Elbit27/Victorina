@@ -16,6 +16,9 @@
     color: #0866ff;
     font-weight: bold;
     margin-bottom: 20px;
+    text-align: center;
+    display: block;
+    width: 100%;
 }
 
 .fb-card {
