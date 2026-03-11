@@ -21,7 +21,11 @@ SITE_ID = 1
 # Application definition
 INSTALLED_APPS = [
     'daphne',
-
+    # my_apps
+    'core',
+    'game',
+    'channels',
+    # ------------------------
     'django.contrib.sites',
     'allauth',
     'allauth.account',
@@ -38,10 +42,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'dj_rest_auth',
-    # my_apps
-    'core',
-    'game',
-    'channels'
+
 ]
 
 MIDDLEWARE = [
@@ -61,7 +62,7 @@ ROOT_URLCONF = 'config.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'core/templates/'],
+        'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -172,3 +173,14 @@ CHANNEL_LAYERS = {
 }
 
 WHITENOISE_AUTOREFRESH = False
+
+# Настройки подтверждения почты
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_EMAIL_VERIFICATION = "mandatory" # "mandatory" — вход невозможен без подтверждения
+ACCOUNT_CONFIRM_EMAIL_ON_GET = True    # Переход по ссылке сразу подтверждает почту
+LOGIN_REDIRECT_URL = '/'               # Куда кидать после входа
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+ACCOUNT_EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL = '/'
+ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True

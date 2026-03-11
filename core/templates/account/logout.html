@@ -1,0 +1,41 @@
+{% extends "core/base.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block title %}Выход - Victorina{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'core/css/signup.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="login-wrapper">
+    <div class="fb-form-container">
+        <div class="brand-section">
+            <h1 class="brand-logo">victorina</h1>
+        </div>
+
+        <div class="fb-card p-5">
+            <h2>Выход из системы</h2>
+            <p class="subtitle">Вы уверены, что хотите выйти из своего аккаунта?</p>
+
+            <hr class="form-divider">
+
+            <form method="post" action="{% url 'account_logout' %}">
+                {% csrf_token %}
+                {% if redirect_field_value %}
+                    <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>
+                {% endif %}
+
+                <button type="submit" class="create-account-btn" style="background-color: #f02849;">
+                    Выйти
+                </button>
+
+                <div class="login-link" style="margin-top: 15px;">
+                    <a href="/">Отмена, я остаюсь!</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

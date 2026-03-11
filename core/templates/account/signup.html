@@ -15,12 +15,15 @@
             <h1 class="brand-logo">victorina</h1>
         </div>
 
-        {% if errors %}
-        <div class="error-summary">
-            {% for field, field_errors in errors.items %}
-                {% for error in field_errors %}
-                    <p>{{ error }}</p>
+        {% if form.errors %}
+        <div class="error-summary" style="color: #f02849; background: #ffebe8; border: 1px solid #f02849; border-radius: 6px; padding: 15px; margin-bottom: 20px; font-size: 14px;">
+            {% for field in form %}
+                {% for error in field.errors %}
+                    <p><strong>{{ field.label }}:</strong> {{ error }}</p>
                 {% endfor %}
+            {% endfor %}
+            {% for error in form.non_field_errors %}
+                <p>{{ error }}</p>
             {% endfor %}
         </div>
         {% endif %}
@@ -30,7 +33,7 @@
             <p class="subtitle">Это быстро и легко.</p>
             <hr class="form-divider">
 
-            <form method="post" action="{% url 'account_login' %}">
+            <form method="post" action="{% url 'account_signup' %}">
                 {% csrf_token %}
 
                 <div class="input-group">
@@ -44,7 +47,7 @@
                 </div>
 
                 <div class="input-group password-field">
-                    <input type="password" name="password" id="id_password_1" placeholder="Новый пароль" required>
+                    <input type="password" name="password1" id="id_password_1" placeholder="Новый пароль" required>
                     <button type="button" class="toggle-password-btn js-toggle-password" data-target="id_password_1">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
                             <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z"/>
