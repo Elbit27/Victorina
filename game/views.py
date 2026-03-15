@@ -5,7 +5,7 @@ from .models import Game
 from django.shortcuts import render, get_object_or_404
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from .ai_services import generate_quiz_data
+from .tasks import generate_quiz_async
 
 
 def game_list(request):
@@ -51,7 +51,7 @@ class GameViewSet(ModelViewSet):
     @action(detail=False, methods=['post', 'get'], permission_classes=[permissions.IsAuthenticated])
     def generate_ai(self, request):
         if request.method == 'GET':
-            return Response({"message": "Введите тему и количество вопросов"})
+            return Response({"message": "Введите тему и количество вопросов для фоновой генерации"})
 
         input_serializer = serializers.AIGenerateSerializer(data=request.data)
         if not input_serializer.is_valid():
@@ -61,22 +61,12 @@ class GameViewSet(ModelViewSet):
         count = input_serializer.validated_data.get('count')
 
         try:
-            ai_data = generate_quiz_data(topic, count=count)
-            print(f"DEBUG AI DATA: {ai_data}")
-
-            save_serializer = serializers.GameSerializer(
-                data=ai_data,
-                context={'request': request}
-            )
-
-            if save_serializer.is_valid():
-                save_serializer.save()
-                return Response(save_serializer.data, status=201)
+            generate_quiz_async.delay(topic, count, request.user.id)
 
             return Response({
-                "error": "ИИ создал данные, которые не подходят для GameSerializer",
-                "details": save_serializer.errors
-            }, status=400)
+                "message": "Генерация теста началась в фоновом режиме.",
+                "details": f"Тема: {topic}. Как только ИИ закончит, тест появится в вашем списке."
+            }, status=202)  # 202 Accepted — стандарт для фоновых задач
 
         except Exception as e:
-            return Response({"error": str(e)}, status=500)
+            return Response({"error": f"Не удалось запустить задачу: {str(e)}"}, status=500)

@@ -11,3 +11,5 @@ daphne
 whitenoise
 Pillow
 django-allauth
+redis
+celery
