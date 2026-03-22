@@ -23,3 +23,5 @@ Now, at this commit I am going to fix some bugs - error representations, back_to
 Mar 8
 Last commits say that I added 
 
+Mar 22
+That was a bad idea to use Readme.md to summarize all successes. It looks terrible there in GitHub

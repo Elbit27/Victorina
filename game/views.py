@@ -5,6 +5,7 @@ from .models import Game
 from django.shortcuts import render, get_object_or_404
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from .tasks import generate_game_async
 
 
@@ -34,6 +35,7 @@ def game_manage_page(request, pk=None):
 
 class GameViewSet(ModelViewSet):
     queryset = Game.objects.all()
+    parser_classes = (MultiPartParser, FormParser, JSONParser)
 
     def perform_create(self, serializer):
         serializer.save(created_by=self.request.user)

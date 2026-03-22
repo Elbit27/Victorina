@@ -79,17 +79,20 @@ document.addEventListener('DOMContentLoaded', () => {
             if (data.player_stats) playerStats = data.player_stats;
             currentIdx = data.new_idx;
 
-            // ОБНОВЛЕНИЕ СЧЕТА (Универсальное)
-            const scoreContainer = document.getElementById('live-scores'); // Убедись, что такой ID есть в HTML
+            const scoreContainer = document.getElementById('live-scores');
             if (scoreContainer && data.scores) {
-                // Мы перебираем все команды, пришедшие с сервера
+                // Используем data.team_names для отображения имен
                 scoreContainer.innerHTML = Object.entries(data.scores).map(([teamId, score]) => {
-                    return `<span class="badge bg-primary me-2">Команда #${teamId}: ${score}</span>`;
+                    const name = data.team_names && data.team_names[teamId]
+                                 ? data.team_names[teamId]
+                                 : `Команда #${teamId}`;
+                    return `<span class="badge rounded-pill live-score-badge">${name}: ${score}</span>`;
                 }).join('');
             }
 
             renderQuestion();
         }
+
         else if (data.type === 'GAME_OVER') {
             console.log("🏁 Игра официально окончена сервером");
             if (data.player_stats) playerStats = data.player_stats;
@@ -187,23 +190,6 @@ function renderLobby(teams, players) {
     }).join('');
 }
 
-function renderQuestion() {
-    const q = questions[currentIdx];
-    if (!q) return;
-
-    document.getElementById('question-text').innerText = q.text;
-    const grid = document.getElementById('answers-grid');
-    grid.innerHTML = q.answers.map(a => `
-        <button class="answer-btn" onclick='handleAnswer(this, ${JSON.stringify(a)})'>
-            ${a.text}
-        </button>
-    `).join('');
-
-    // Сбрасываем статусное сообщение
-    const statusMsg = document.getElementById('game-status-msg');
-    if (statusMsg) statusMsg.innerText = "";
-    canClick = true;
-}
 
 // Функция отправки запроса на удаление
 function deleteTeamRemote(teamId) {
@@ -309,6 +295,39 @@ function joinTeamRemote(teamId) {
     }
 }
 
+function renderQuestion() {
+    const q = questions[currentIdx];
+    if (!q) return;
+
+    // 1. Текст вопроса
+    document.getElementById('question-text').innerText = q.text;
+
+    // 2. Центрирование и стилизация фото
+    const imageElement = document.getElementById('question-image');
+    if (imageElement) {
+        if (q.image && q.image.trim() !== "" && q.image !== "None") {
+            imageElement.src = q.image;
+            imageElement.style.display = 'block';
+            imageElement.style.margin = '0 auto 20px auto'; // Центрируем по горизонтали и даем отступ снизу
+        } else {
+            imageElement.style.display = 'none';
+            imageElement.src = "";
+        }
+    }
+
+    // 3. Ответы
+    const grid = document.getElementById('answers-grid');
+    grid.innerHTML = q.answers.map(a => `
+        <button class="answer-btn" onclick='handleAnswer(this, ${JSON.stringify(a)})'>
+            ${a.text}
+        </button>
+    `).join('');
+
+    const statusMsg = document.getElementById('game-status-msg');
+    if (statusMsg) statusMsg.innerText = "";
+    canClick = true;
+}
+
 function showResults(finalScores, teamNames) {
     const mainUI = document.getElementById('main-game-ui');
     const resultScreen = document.getElementById('result-screen');
@@ -344,7 +363,7 @@ function showResults(finalScores, teamNames) {
                 <div class="result-card mx-auto shadow-2xl" style="max-width: 700px;">
                     <div class="d-flex justify-content-between align-items-center mb-4 border-bottom border-secondary pb-3">
                         <h4 class="mb-0 fw-bold">Рейтинг игроков</h4>
-                        <span class="text-muted small">${sortedPlayers.length} участников</span>
+                        <span style="color: #ffffff;">${sortedPlayers.length} участников</span>
                     </div>
 
                     <div class="player-list">

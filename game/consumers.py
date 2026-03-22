@@ -237,10 +237,14 @@ class GameConsumer(AsyncWebsocketConsumer):
         }))
 
     async def next_question_broadcast(self, event):
+        lobby_data = await database_sync_to_async(self.get_lobby_data)()
+        team_names = {str(t['id']): t['name'] for t in lobby_data['teams']}
+
         await self.send(text_data=json.dumps({
             'type': 'NEXT_QUESTION',
             'new_idx': event['new_idx'],
             'scores': event['new_scores'],
+            'team_names': team_names,
             'player_stats': event['player_stats']
         }))
 

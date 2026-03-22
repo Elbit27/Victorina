@@ -107,11 +107,14 @@ document.getElementById('submit-game').addEventListener('click', async function(
         questionsData.push({
             text: qTextInput.value,
             answers: answers
+            image_key: null
         });
 
         const imageInput = qCard.querySelector('.question-image');
         if (imageInput && imageInput.files[0]) {
-            formData.append(`image_${qIndex}`, imageInput.files[0]);
+            const key = `image_${qIndex}`; // Уникальный ключ
+            formData.append(key, imageInput.files[0]);
+            questionObj.image_key = key; // Записываем ключ в JSON
         }
     });
 

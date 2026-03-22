@@ -85,16 +85,32 @@ class GameSerializer(serializers.ModelSerializer):
         return game
 
     def update(self, instance, validated_data):
-        questions_data = validated_data.pop('questions')
+        request = self.context.get('request')
+
         instance.title = validated_data.get('title', instance.title)
         instance.save()
 
         instance.questions.all().delete()
-        for question_data in questions_data:
-            answers_data = question_data.pop('answers')
-            question = Question.objects.create(game=instance, **question_data)
-            for answer_data in answers_data:
-                Answer.objects.create(question=question, **answer_data)
+        questions_data = validated_data.get('questions', [])
+
+        for i, q_data in enumerate(questions_data):
+            answers_data = q_data.pop('answers', [])
+            image_key = q_data.get('image_key')
+
+            question = Question.objects.create(game=instance, text=q_data.get('text'))
+
+            file_to_upload = None
+            if image_key and request.FILES.get(image_key):
+                file_to_upload = request.FILES[image_key]
+            elif request.FILES.get(f'image_{i}'):
+                file_to_upload = request.FILES[f'image_{i}']
+
+            if file_to_upload:
+                question.image = file_to_upload
+                question.save()
+
+            for a_data in answers_data:
+                Answer.objects.create(question=question, **a_data)
 
         return instance
 

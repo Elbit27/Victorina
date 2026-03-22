@@ -43,21 +43,20 @@
         </div>
     </div>
 
-    <div id="main-game-ui" style="display: none;">
-        <div id="dynamic-live-score" class="live-score d-flex justify-content-center gap-4 flex-wrap mb-3">
+    <div id="main-game-ui" style="display:none;" class="bg-dark text-light p-4 rounded-3 shadow-lg">
+        <div id="live-scores" class="mb-4 text-center d-flex justify-content-center gap-2">
             </div>
 
-        <div class="progress-container mb-4">
-            <div id="progress-bar" class="progress-bar"></div>
-        </div>
+        <div class="neon-question-card p-5 shadow-lg position-relative" style="background: rgba(33, 37, 41, 0.7); border-radius: 20px;">
+            <div class="text-center mb-4 neon-photo-container">
+                <img id="question-image" src="" alt="Вопрос" style="display: none;">
+            </div>
 
-        <div id="question-image-container" class="text-center mb-3" style="display: none;"></div>
+            <h2 id="question-text" class="text-center mb-4 fw-bold question-text">Загрузка вопроса...</h2>
+            <div id="game-status-msg" class="text-center fw-bold mb-3"></div>
 
-        <div id="game-screen" class="question-box shadow">
-            <div id="progress" class="question-number text-muted">Вопрос ...</div>
-            <h2 id="question-text" class="mb-4">Приготовьтесь...</h2>
-            <div id="game-status-msg" class="status-msg mb-3 fw-bold"></div>
-            <div id="answers-grid" class="answers-grid"></div>
+            <div id="answers-grid" class="d-grid gap-3">
+                </div>
         </div>
     </div>
 
