@@ -28,19 +28,14 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log("📥 Сообщение:", data);
 
         if (data.type === 'ROOM_UPDATE') {
-            updateLobbyUI(data.players);
+        renderLobby(data.teams, data.players);
 
-            const myName = window.userName;
-            console.log("Ищу себя в списке. Мое имя (window.userName):", myName);
-            console.log("Список игроков от сервера:", Object.keys(data.players));
-
-            if (data.players && data.players[myName]) {
-                myTeam = data.players[myName].team;
-                console.log("✅ Успех! Моя команда:", myTeam);
-            } else {
-                console.error("❌ Ошибка: Я не нашел себя в списке игроков!");
-            }
+        const myName = window.userName;
+        if (data.players && data.players[myName]) {
+            myTeam = data.players[myName].team_id;
+            console.log("✅ Моя команда (ID):", myTeam);
         }
+    }
 
         if (data.type === 'TEAM_BLOCKED') {
             const btns = document.querySelectorAll('.answer-btn');
@@ -83,21 +78,29 @@ document.addEventListener('DOMContentLoaded', () => {
         if (data.type === 'NEXT_QUESTION') {
             if (data.player_stats) playerStats = data.player_stats;
             currentIdx = data.new_idx;
-            document.getElementById('score-a').innerText = data.scores.A;
-            document.getElementById('score-b').innerText = data.scores.B;
+
+            // ОБНОВЛЕНИЕ СЧЕТА (Универсальное)
+            const scoreContainer = document.getElementById('live-scores'); // Убедись, что такой ID есть в HTML
+            if (scoreContainer && data.scores) {
+                // Мы перебираем все команды, пришедшие с сервера
+                scoreContainer.innerHTML = Object.entries(data.scores).map(([teamId, score]) => {
+                    return `<span class="badge bg-primary me-2">Команда #${teamId}: ${score}</span>`;
+                }).join('');
+            }
+
             renderQuestion();
         }
         else if (data.type === 'GAME_OVER') {
             console.log("🏁 Игра официально окончена сервером");
-            // Обновляем финальный счет перед показом
-            document.getElementById('score-a').innerText = data.scores.A;
-            document.getElementById('score-b').innerText = data.scores.B;
             if (data.player_stats) playerStats = data.player_stats;
 
-            // Вызываем твою функцию, которая рисует таблицу лидеров
-            showResults();
+            console.log("Финальный счет:", data.scores, data.team_names);
+
+            // Вызываем функцию показа результатов и передаем туда объект со счетом
+            showResults(data.scores, data.team_names);
         }
     };
+
 
     const startBtn = document.getElementById('start-now-btn');
     if (startBtn) {
@@ -109,59 +112,121 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-function renderQuestion() {
-    const questionText = document.getElementById('question-text');
-    const statusMsg = document.getElementById('game-status-msg');
-    const answersGrid = document.getElementById('answers-grid');
-    let imageContainer = document.getElementById('question-image-container');
+function createTeamRemote() {
+    const nameInput = document.getElementById('new-team-name');
+    const name = nameInput.value.trim();
+    if (!name) return;
 
-    if (currentIdx >= questions.length) {
-        showResults();
-        return;
-    }
+    // Отправляем через сокет, чтобы все увидели новую команду сразу
+    gameSocket.send(JSON.stringify({
+        'action': 'create_team',
+        'name': name
+    }));
+    nameInput.value = '';
+}
 
-    canClick = true;
-    const q = questions[currentIdx];
+function renderTeams(teamsData) {
+    const container = document.getElementById('teams-container');
+    container.innerHTML = '';
 
-    // Очищаем всё старое
-    questionText.innerText = q.text;
-    questionText.style.color = "black";
-    if (statusMsg) statusMsg.innerText = ""; // Чистим надпись "Соперник ошибся"
-
-    if (imageContainer) {
-        if (q.image) {
-            // Если в JSON пришел относительный путь, Django обычно отдает его от корня или с медиа
-            // Убедись, что q.image содержит правильный URL
-            imageContainer.innerHTML = `
-                <img src="${q.image}"
-                     style="max-width: 100%; max-height: 300px; border-radius: 15px; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); display: block; margin-left: auto; margin-right: auto;">
-            `;
-            imageContainer.style.display = 'block';
-        } else {
-            imageContainer.innerHTML = '';
-            imageContainer.style.display = 'none';
-        }
-    }
-
-    answersGrid.innerHTML = '';
-    q.answers.forEach((ans) => {
-        const btn = document.createElement('button');
-        btn.className = 'answer-btn';
-        btn.innerText = ans.text;
-        btn.onclick = () => handleAnswer(btn, ans);
-        answersGrid.appendChild(btn);
+    teamsData.forEach(team => {
+        const teamCard = `
+            <div class="col-md-4">
+                <div class="card shadow-sm">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">${team.name}</h5>
+                        <button onclick="joinTeam(${team.id})" class="btn btn-sm btn-outline-primary">Вступить</button>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-unstyled">
+                            ${team.players.map(p => `<li>👤 ${p.username}</li>`).join('')}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        `;
+        container.innerHTML += teamCard;
     });
 }
 
+function renderLobby(teams, players) {
+    const container = document.getElementById('teams-container');
+    if (!container) return;
+
+    container.innerHTML = teams.map(team => {
+        const teamPlayers = Object.entries(players)
+            .filter(([name, info]) => info.team_id === team.id)
+            .map(([name]) => name);
+
+        // Кнопка удаления только для персонала
+        const deleteBtn = window.isStaff
+            ? `<button onclick="deleteTeamRemote(${team.id})" class="btn btn-sm btn-danger opacity-75" title="Удалить команду">×</button>`
+            : '';
+
+        return `
+            <div class="col-md-4">
+                <div class="card mb-3 shadow-sm ${myTeam === team.id ? 'border-success' : 'border-primary'}">
+                    <div class="card-header ${myTeam === team.id ? 'bg-success' : 'bg-primary'} text-white d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">${team.name}</h5>
+                        ${deleteBtn}
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-unstyled mb-3">
+                            ${teamPlayers.length > 0
+                                ? teamPlayers.map(p => `<li>👤 ${p}</li>`).join('')
+                                : '<li class="text-muted small">Пока пусто...</li>'}
+                        </ul>
+                        <button onclick="joinTeamRemote(${team.id})"
+                                class="btn ${myTeam === team.id ? 'btn-outline-success disabled' : 'btn-outline-primary'} w-100">
+                            ${myTeam === team.id ? '✅ Вы здесь' : 'Вступить'}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+function renderQuestion() {
+    const q = questions[currentIdx];
+    if (!q) return;
+
+    document.getElementById('question-text').innerText = q.text;
+    const grid = document.getElementById('answers-grid');
+    grid.innerHTML = q.answers.map(a => `
+        <button class="answer-btn" onclick='handleAnswer(this, ${JSON.stringify(a)})'>
+            ${a.text}
+        </button>
+    `).join('');
+
+    // Сбрасываем статусное сообщение
+    const statusMsg = document.getElementById('game-status-msg');
+    if (statusMsg) statusMsg.innerText = "";
+    canClick = true;
+}
+
+// Функция отправки запроса на удаление
+function deleteTeamRemote(teamId) {
+    if (!confirm("Удалить эту команду? Все игроки из неё станут 'без команды'.")) return;
+
+    gameSocket.send(JSON.stringify({
+        'action': 'delete_team',
+        'team_id': teamId
+    }));
+}
+
 function handleAnswer(selectedBtn, answer) {
-    if (!canClick) return;
+    if (!canClick || !myTeam) return; // Не даем кликать, если нет команды
 
     gameSocket.send(JSON.stringify({
         'action': 'submit_answer',
         'is_correct': answer.is_correct,
-        'answer_text': answer.text
+        'answer_text': answer.text,
+        'total_questions': questions.length // Передаем длину массива вопросов
     }));
 }
+
+
 
 function applyBlockVisuals() {
     canClick = false;
@@ -196,80 +261,118 @@ function changeTeam(teamName) {
 }
 
 function updateLobbyUI(players) {
-    console.log("📥 Обновление лобби. Данные:", players); // Посмотри это в консоли браузера (F12)
+    const container = document.getElementById('teams-container');
+    if (!container) return;
 
-    const listA = document.getElementById('list-a');
-    const listB = document.getElementById('list-b');
-
-    if (!listA || !listB) {
-        console.error("❌ Элементы list-a или list-b не найдены на странице!");
-        return;
+    // Группируем игроков по командам
+    const teamsMap = {};
+    for (let user in players) {
+        const tName = players[user].team_name || "Без команды";
+        const tId = players[user].team_id;
+        if (!teamsMap[tId]) teamsMap[tId] = { name: tName, players: [] };
+        teamsMap[tId].players.push(user);
     }
 
-    // Очищаем списки перед отрисовкой
-    listA.innerHTML = '';
-    listB.innerHTML = '';
+    // Рендерим карточки
+    container.innerHTML = Object.entries(teamsMap).map(([id, team]) => `
+        <div class="col-md-4">
+            <div class="card shadow-sm border-primary">
+                <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                    <strong class="text-primary">${team.name}</strong>
+                    <button onclick="joinTeamRemote(${id})" class="btn btn-primary btn-sm">Вступить</button>
+                </div>
+                <div class="card-body p-2">
+                    <ul class="list-unstyled mb-0">
+                        ${team.players.map(p => `<li>👤 ${p}</li>`).join('')}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
 
-    for (let name in players) {
-        const li = document.createElement('li');
-        li.innerText = name;
+function joinTeamRemote(teamId) {
+    const oldTeam = myTeam;
+    myTeam = teamId;
 
-        if (players[name].team === 'A') {
-            listA.appendChild(li);
-        } else {
-            listB.appendChild(li);
-        }
+    console.log(`Переход из ${oldTeam} в ${teamId}`);
+
+    if (gameSocket && gameSocket.readyState === WebSocket.OPEN) {
+        gameSocket.send(JSON.stringify({
+            'action': 'join_team',
+            'team_id': teamId
+        }));
+    } else {
+        // Если сокет упал, возвращаем как было
+        myTeam = oldTeam;
+        alert("Связь с сервером потеряна!");
     }
 }
 
-function showResults() {
-    document.getElementById('main-game-ui').style.display = 'none';
+function showResults(finalScores, teamNames) {
+    const mainUI = document.getElementById('main-game-ui');
     const resultScreen = document.getElementById('result-screen');
-    if (!resultScreen) return;
 
-    // Считаем финальный счет из элементов на странице
-    const scoreA = parseInt(document.getElementById('score-a').innerText) || 0;
-    const scoreB = parseInt(document.getElementById('score-b').innerText) || 0;
+    if (mainUI) mainUI.style.display = 'none';
+    if (resultScreen) resultScreen.style.display = 'block';
 
-    // Определяем текст победителя
-    let winnerText = "НИЧЬЯ!";
-    let winnerColor = "#666";
-    if (scoreA > scoreB) {
-        winnerText = "ПОБЕДА КОМАНДЫ А";
-        winnerColor = "#ff4d4d";
-    } else if (scoreB > scoreA) {
-        winnerText = "ПОБЕДА КОМАНДЫ Б";
-        winnerColor = "#4d79ff";
+    let winnerName = "Игра завершена";
+    let winnerScore = 0;
+
+    if (finalScores && teamNames && Object.keys(finalScores).length > 0) {
+        const sortedTeams = Object.entries(finalScores).sort(([, a], [, b]) => b - a);
+        const [topTeamId, topScore] = sortedTeams[0];
+        winnerName = teamNames[topTeamId] || `Команда #${topTeamId}`;
+        winnerScore = topScore;
     }
 
-    // Превращаем объект статистики в массив и сортируем (от большего к меньшему)
-    const sortedPlayers = Object.entries(playerStats)
-        .sort(([, a], [, b]) => b - a);
+    const sortedPlayers = Object.entries(playerStats || {}).sort(([, a], [, b]) => b - a);
 
-    resultScreen.style.display = 'block';
-    resultScreen.innerHTML = `
-        <div style="text-align: center; padding: 20px;">
-            <h1 style="color: ${winnerColor}; font-size: 3em; margin-bottom: 10px;">${winnerText}</h1>
-            <h2 style="margin-bottom: 30px;">Счет: ${scoreA} — ${scoreB}</h2>
+    if (resultScreen) {
+        resultScreen.innerHTML = `
+            <div class="container py-5">
+                <div class="text-center mb-5">
+                    <p class="text-uppercase fw-bold tracking-widest text-blue-400 mb-2" style="color: #60a5fa; letter-spacing: 2px;">Финальные результаты</p>
+                    <h1 class="display-3 winner-title mb-3">
+                        ${winnerName}
+                    </h1>
+                    <div class="d-inline-block px-4 py-2 rounded-pill shadow-sm" style="background: rgba(251, 191, 36, 0.1); border: 1px solid rgba(251, 191, 36, 0.3);">
+                        <span class="text-warning fw-bold fs-4">🏆 Победитель счётом ${winnerScore}</span>
+                    </div>
+                </div>
 
-            <div style="background: #f9f9f9; border-radius: 15px; padding: 20px; max-width: 400px; margin: 0 auto; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
-                <h3 style="margin-bottom: 15px; border-bottom: 2px solid #ddd; padding-bottom: 10px;">Рейтинг игроков</h3>
-                <ul style="list-style: none; padding: 0;">
-                    ${sortedPlayers.map(([name, score], index) => `
-                        <li style="display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid #eee; ${index === 0 ? 'font-weight: bold; color: #d4af37;' : ''}">
-                            <span>${index + 1}. ${name} ${index === 0 ? '👑' : ''}</span>
-                            <span>${score} отв.</span>
-                        </li>
-                    `).join('')}
-                </ul>
-                    ${sortedPlayers.length === 0 ? '<p>Никто не успел ответить правильно</p>' : ''}
+                <div class="result-card mx-auto shadow-2xl" style="max-width: 700px;">
+                    <div class="d-flex justify-content-between align-items-center mb-4 border-bottom border-secondary pb-3">
+                        <h4 class="mb-0 fw-bold">Рейтинг игроков</h4>
+                        <span class="text-muted small">${sortedPlayers.length} участников</span>
+                    </div>
+
+                    <div class="player-list">
+                        ${sortedPlayers.length > 0 ? sortedPlayers.map(([name, score], index) => `
+                            <div class="player-row d-flex justify-content-between align-items-center p-3">
+                                <div class="d-flex align-items-center">
+                                    <div class="rank-circle me-3 d-flex align-items-center justify-content-center rounded-circle"
+                                         style="width: 40px; height: 40px; background: ${index === 0 ? '#fbbf24' : 'rgba(255,255,255,0.1)'}; color: ${index === 0 ? '#000' : '#fff'}; font-weight: 800;">
+                                        ${index + 1}
+                                    </div>
+                                    <span class="fs-5 fw-medium">${name}</span>
+                                </div>
+                                <span class="badge score-badge rounded-pill fs-6">${score} правильных</span>
+                            </div>
+                        `).join('') : '<p class="text-center py-5 text-muted">Никто не набрал очков в этом раунде</p>'}
+                    </div>
+
+                    <div class="text-center mt-5">
+                        <button onclick="location.reload()" class="btn btn-restart shadow-lg">
+                             Играть снова
+                        </button>
+                    </div>
+                </div>
+
+                <div class="text-center mt-4 text-muted small">
+                    <p>© 2026 Victorina Game • Разработано для побед</p>
+                </div>
             </div>
-
-            <div style="margin-top: 40px;">
-                <button onclick="location.reload()" class="btn-blue" style="padding: 15px 30px; font-size: 1.1em;">Вернуться в лобби</button>
-                <br><br>
-                <a href="/" style="color: #888; text-decoration: none;">Выйти в главное меню</a>
-            </div>
-        </div>
-    `;
+        `;
+    }
 }

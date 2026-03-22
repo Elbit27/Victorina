@@ -9,7 +9,6 @@ document.addEventListener('DOMContentLoaded', function() {
             const count = document.getElementById('count').value;
             const loader = document.getElementById('loader');
 
-            // Показываем лоадер, скрываем форму
             form.style.display = 'none';
             loader.style.display = 'block';
 
@@ -27,7 +26,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
 
                 if (response.ok) {
-                    // Редирект на список игр
                     window.location.href = "/";
                 } else {
                     const data = await response.json();

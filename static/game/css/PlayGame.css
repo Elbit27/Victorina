@@ -155,3 +155,62 @@
     0% { opacity: 0; transform: scale(0.95); }
     100% { opacity: 1; transform: scale(1); }
 }
+
+/* Стиль для экрана результатов */
+#result-screen {
+    background: radial-gradient(circle at top, #1e3a8a 0%, #0f172a 100%);
+    min-height: 100vh;
+    color: white;
+    font-family: 'Inter', sans-serif; /* Если есть возможность, подключи этот шрифт */
+}
+
+.result-card {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 24px;
+    padding: 2rem;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+.winner-title {
+    font-weight: 800;
+    letter-spacing: -1px;
+    background: linear-gradient(to right, #fbbf24, #f59e0b);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-transform: uppercase;
+}
+
+.player-row {
+    transition: all 0.3s ease;
+    border-radius: 12px;
+    margin-bottom: 8px;
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.player-row:hover {
+    background: rgba(255, 255, 255, 0.08);
+    transform: translateX(5px);
+}
+
+.score-badge {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    border: none;
+    padding: 0.5rem 1rem;
+    font-weight: 600;
+}
+
+.btn-restart {
+    background: white;
+    color: #0f172a;
+    font-weight: 700;
+    border-radius: 14px;
+    padding: 12px 40px;
+    transition: all 0.2s;
+}
+
+.btn-restart:hover {
+    transform: scale(1.05);
+    background: #f1f5f9;
+}

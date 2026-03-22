@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.db import models
+from django.contrib.auth.models import User
 import random
 import string
 
@@ -58,3 +59,16 @@ class Answer(models.Model):
     def __str__(self):
         mark = "✔" if self.is_correct else "✖"
         return f"{mark} {self.text}"
+
+class Team(models.Model):
+    game = models.ForeignKey(Game, on_delete=models.CASCADE, related_name='teams')
+    name = models.CharField(max_length=100)
+    score = models.IntegerField(default=0)
+
+    def __str__(self): # Было __clans__
+        return f"{self.name} (Игра: {self.game.title})"
+
+class Player(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    game = models.ForeignKey(Game, on_delete=models.CASCADE)
+    team = models.ForeignKey(Team, on_delete=models.SET_NULL, null=True, blank=True)
