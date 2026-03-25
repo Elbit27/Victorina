@@ -257,6 +257,17 @@ class GameConsumer(AsyncWebsocketConsumer):
         }))
 
     async def disconnect(self, close_code):
+        if self.user.is_authenticated:
+            await database_sync_to_async(self.remove_player_from_game)()
         await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
+        await self.broadcast_room_update()
 
+    def remove_player_from_game(self):
+        from .models import Player
+        try:
+            player = Player.objects.get(user=self.user, game_id=self.game_id)
+            player.delete()
+            print(f"👋 Игрок {self.user.username} покинул лобби (дисконнект)")
+        except Player.DoesNotExist:
+            pass
 

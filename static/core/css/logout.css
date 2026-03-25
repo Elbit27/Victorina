@@ -1,0 +1,81 @@
+/* Стили специально для контейнера выхода */
+.login-wrapper {
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f0f2f5; /* Светлый нейтральный фон */
+}
+
+.fb-form-container {
+    max-width: 450px;
+    width: 100%;
+    text-align: center;
+}
+
+.brand-logo {
+    font-size: 3rem;
+    font-weight: 800;
+    color: #3498db; /* Твой sky-blue */
+    margin-bottom: 20px;
+    text-decoration: none;
+}
+
+.fb-card {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, .1), 0 8px 28px rgba(0, 0, 0, .1);
+    padding: 30px;
+}
+
+.fb-card h2 {
+    font-size: 24px;
+    font-weight: 700;
+    color: #1c1e21;
+    margin-bottom: 10px;
+}
+
+.subtitle {
+    font-size: 16px;
+    color: #606770;
+    margin-bottom: 20px;
+}
+
+.form-divider {
+    border: 0;
+    border-top: 1px solid #dadde1;
+    margin: 20px 0;
+}
+
+/* Кнопка выхода */
+.create-account-btn {
+    width: 100%;
+    padding: 12px;
+    font-size: 18px;
+    font-weight: 700;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.1s;
+}
+
+.create-account-btn:hover {
+    filter: brightness(0.9);
+}
+
+.create-account-btn:active {
+    transform: scale(0.98);
+}
+
+/* Ссылка отмены */
+.login-link a {
+    color: #3498db;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 15px;
+}
+
+.login-link a:hover {
+    text-decoration: underline;
+}

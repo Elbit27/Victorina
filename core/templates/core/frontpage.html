@@ -1,7 +1,7 @@
 {% extends "core/base.html" %}
 {% load static %}
 
-{% block title %}Платформа для командных битв{% endblock %}
+{% block title %}Платформа академического тестирования | Victorina Battle{% endblock %}
 
 {% block css %}
 <link rel="stylesheet" href="{% static 'core/css/frontpage.css' %}">
@@ -12,50 +12,50 @@
 
     <section class="hero">
         <div class="hero-content">
-            <h1>Битва интеллектов для вашего офиса</h1>
-            <p>Создавайте викторины, разделяйте коллег на команды и узнайте, кто в вашей компании настоящий знаток.</p>
-        <div class="cta-group">
-            {% if user.is_authenticated %}
-                <a href="{% url 'join_page' %}" class="btn btn-primary">Играть</a>
-                <a href="#about" class="btn btn-secondary">Узнать больше</a>
-            {% else %}
-                <!-- НЕ авторизован -->
-                <a href="{% url 'account_login' %}?next={% url 'frontpage' %}" class="btn btn-primary">Играть</a>
-                <a href="#about" class="btn btn-secondary">Узнать больше</a>
-            {% endif %}
-        </div>
+            <h1>Интеллектуальный контроль знаний студентов</h1>
+            <p>Инновационная платформа для проведения командных зачетов, проверочных работ и экзаменационных сессий в интерактивном формате.</p>
+            <div class="cta-group">
+                {% if user.is_authenticated %}
+                    <a href="{% url 'join_page' %}" class="btn btn-primary">Начать тестирование</a>
+                    <a href="#about" class="btn btn-outline">Методология</a>
+                {% else %}
+                    <a href="{% url 'account_login' %}?next={% url 'frontpage' %}" class="btn btn-primary">Авторизация</a>
+                    <a href="#about" class="btn btn-outline">О платформе</a>
+                {% endif %}
+            </div>
         </div>
         <div class="hero-image">
-            <div class="game-demo-card">
+            <div class="academic-card">
+                <div class="status-badge">Экзамен: Активен</div>
                 <div class="team-vs">
-                    <span class="t1">Team Alpha</span>
-                    <span class="vs">VS</span>
-                    <span class="t2">Team Beta</span>
+                    <span class="t1">Группа ЭУ 15-25</span>
+                    <span class="vs">Баллы</span>
+                    <span class="t2">Группа ЭУ 15-26</span>
                 </div>
-                <div class="pulse-line"></div>
+                <div class="progress-bar"><div class="fill"></div></div>
             </div>
         </div>
     </section>
 
     <section id="about" class="features">
-        <h2>Почему выбирают Victorina?</h2>
+        <h2>Преимущества для учебного процесса</h2>
         <div class="features-grid">
             <article class="feature-item">
-                <div class="icon">👥</div>
-                <h3>Командный дух</h3>
-                <p>Идеально для тимбилдинга. Делите компанию на 2 команды и разжигайте азарт соревнования.</p>
+                <div class="icon">🎓</div>
+                <h3>Академическая оценка</h3>
+                <p>Автоматизированный подсчет баллов и формирование ведомостей по итогам лекционных занятий.</p>
             </article>
 
             <article class="feature-item">
-                <div class="icon">⚡</div>
-                <h3>Режим реального времени</h3>
-                <p>Мгновенная реакция на "кнопку-зуммер". Кто первый нажал — тот и отвечает.</p>
+                <div class="icon">⏱️</div>
+                <h3>Контроль времени</h3>
+                <p>Режим "блиц-опроса" тренирует скорость реакции и глубину освоения материала в реальном времени.</p>
             </article>
 
             <article class="feature-item">
-                <div class="icon">📊</div>
-                <h3>База знаний</h3>
-                <p>Используйте SQL для хранения тысяч вопросов и ведения глобального рейтинга компаний.</p>
+                <div class="icon">📝</div>
+                <h3>Аналитика ответов</h3>
+                <p>Детальная статистика по каждому студенту для выявления пробелов в знаниях после курса лекций.</p>
             </article>
         </div>
     </section>

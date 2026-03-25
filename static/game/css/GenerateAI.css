@@ -1,90 +1,128 @@
-/* Обёртка для страницы, чтобы занять всё свободное место под шапкой */
+:root {
+    --primary-ai: #6366f1; /* Индиго */
+    --secondary-ai: #a855f7; /* Пурпурный */
+    --glass-bg: rgba(255, 255, 255, 0.85);
+    --text-dark: #1e293b;
+}
+
 .ai-page-wrapper {
     min-height: 80vh;
     display: flex;
     align-items: center;
     justify-content: center;
+    background: radial-gradient(circle at top right, #e0e7ff, #f3e8ff, #ffffff);
     padding: 20px;
-    /* Если хочешь оставить градиент только для этой страницы: */
-    background: radial-gradient(circle at top right, #4e54c8, #8f94fb);
-    border-radius: 15px;
-    margin-top: 20px;
 }
 
+/* Эффект матового стекла для карточки */
 .glass-card {
-    background: rgba(255, 255, 255, 0.15);
+    background: var(--glass-bg);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    border-radius: 20px;
-    padding: 40px;
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    text-align: center;
-    max-width: 700px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 24px;
+    padding: 3rem;
+    max-width: 800px;
     width: 100%;
-    color: white;
+    text-align: center;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
 }
 
 .ai-title {
-    font-size: 2.2rem;
+    font-size: 2.5rem;
     font-weight: 800;
-    margin-bottom: 1rem;
-    color: #ffffff;
+    background: linear-gradient(90deg, var(--primary-ai), var(--secondary-ai));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 0.5rem;
 }
 
 .ai-subtitle {
+    color: #64748b;
     font-size: 1.1rem;
-    font-weight: 300;
-    margin-bottom: 2rem;
-    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 2.5rem;
 }
 
-/* Стили полей ввода */
-.glass-card .form-control {
-    background: rgba(255, 255, 255, 0.1) !important;
-    border: 1px solid rgba(255, 255, 255, 0.3) !important;
-    color: white !important;
-    border-radius: 10px;
+/* Стилизация полей ввода */
+.form-control-lg {
+    border-radius: 12px;
+    border: 2px solid #e2e8f0;
+    padding: 12px 20px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
 }
 
-.glass-card .form-control::placeholder {
-    color: rgba(255, 255, 255, 0.6);
+.form-control-lg:focus {
+    border-color: var(--primary-ai);
+    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+    outline: none;
 }
 
+/* Кнопка с анимацией градиента */
 .btn-ai {
-    background: #ffffff;
-    color: #4e54c8;
-    font-weight: bold;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    padding: 12px 40px;
-    border-radius: 50px;
+    background: linear-gradient(135deg, var(--primary-ai), var(--secondary-ai));
+    color: white;
     border: none;
-    transition: 0.3s;
+    padding: 14px 40px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    width: auto;
+    display: inline-block;
 }
 
 .btn-ai:hover {
-    background: #4e54c8;
-    color: white;
-    box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
 }
 
-/* Лоадер */
+.btn-ai:active {
+    transform: translateY(0);
+}
+
+/* Стили лоадера */
 #loader {
-    display: none;
+    display: none; /* Скрыт по умолчанию, показывается через JS */
+    flex-direction: column;
+    align-items: center;
 }
 
 .spinner-inner {
     width: 60px;
     height: 60px;
-    border: 6px solid rgba(255, 255, 255, 0.1);
-    border-top: 6px solid #ffffff;
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid var(--primary-ai);
     border-radius: 50%;
     animation: spin 1s linear infinite;
-    margin: 20px auto;
+    margin-bottom: 1.5rem;
 }
 
+.loading-text {
+    color: var(--primary-ai);
+    font-weight: 500;
+    font-style: italic;
+    animation: pulse 1.5s infinite;
+}
+
+/* Анимации */
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .glass-card {
+        padding: 2rem 1.5rem;
+    }
+    .ai-title {
+        font-size: 1.8rem;
+    }
 }

@@ -6,35 +6,23 @@
 
 {% block css %}
 <link rel="stylesheet" href="{% static 'core/css/login.css' %}">
-<style>
-    /* Доп. стили специально для этой страницы */
-    .google-confirm-card {
-        text-align: center;
-        padding: 40px;
-    }
-    .google-icon-big {
-        width: 60px;
-        margin-bottom: 20px;
-    }
-    .confirm-text {
-        color: #606770;
-        font-size: 16px;
-        margin-bottom: 30px;
-    }
-</style>
+
+
 {% endblock %}
 
 {% block content %}
 <div class="login-wrapper">
     <div class="form-section">
         <div class="login-card google-confirm-card">
-            <h1 class="brand-logo" style="font-size: 36px;">victorina</h1>
+            <h1 class="brand-logo">unify<span>academy</span></h1>
 
-            <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google" class="google-icon-big">
+            <div class="google-icon-wrapper">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google" class="google-icon-big">
+            </div>
 
-            <h3>{% trans "Sign In" %}</h3>
+            <h3 class="auth-subtitle">{% trans "Confirm Sign In" %}</h3>
             <p class="confirm-text">
-                Вы собираетесь войти в свой аккаунт Victorina, используя профиль Google.
+                Вы собираетесь авторизоваться в системе <strong>Unify Academy</strong>, используя ваш корпоративный или личный профиль Google.
             </p>
 
             <form method="post">
@@ -45,8 +33,8 @@
             </form>
 
             <div class="mt-3">
-                <a href="{% url 'account_login' %}" class="helper-link" style="display: inline-block; margin-top: 15px;">
-                    Отмена
+                <a href="{% url 'account_login' %}" class="helper-link cancel-link">
+                    Вернуться назад
                 </a>
             </div>
         </div>

@@ -1,28 +1,120 @@
 {% extends 'core/base.html' %}
 
+{% block title %}Вход в сессию | Lumos Academy{% endblock %}
+
+{% block css %}
+<style>
+    .join-wrapper {
+        min-height: 70vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .join-card {
+        border: none;
+        border-radius: 16px;
+        background: #ffffff;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
+        padding: 40px;
+        transition: transform 0.3s ease;
+    }
+
+    .join-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .academic-header {
+        color: #212529;
+        font-weight: 800;
+        letter-spacing: -1px;
+        margin-bottom: 10px;
+    }
+
+    .academic-subtitle {
+        color: #7f8c8d;
+        font-size: 0.95rem;
+        margin-bottom: 35px;
+    }
+
+    .pin-input {
+        background-color: #f8f9fa;
+        border: 2px solid #eee;
+        border-radius: 12px;
+        font-family: 'Inter', sans-serif;
+        font-weight: 700;
+        color: #212529;
+        transition: all 0.3s ease;
+        padding: 20px;
+    }
+
+    .pin-input:focus {
+        background-color: #fff;
+        border-color: #3498db;
+        box-shadow: 0 0 0 4px rgba(52, 152, 219, 0.1);
+        outline: none;
+    }
+
+    .pin-input::placeholder {
+        color: #bdc3c7;
+        letter-spacing: 0;
+        font-size: 1.2rem;
+        font-weight: 400;
+    }
+
+    .btn-join {
+        background-color: #3498db;
+        border: none;
+        border-radius: 12px;
+        padding: 16px;
+        font-weight: 700;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+        margin-top: 10px;
+    }
+
+    .btn-join:hover {
+        background-color: #2980b9;
+        box-shadow: 0 8px 20px rgba(52, 152, 219, 0.3);
+    }
+
+    .error-box {
+        background-color: #fff5f5;
+        color: #e74c3c;
+        padding: 12px;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        font-weight: 500;
+        border: 1px solid #ff00001a;
+        display: none;
+        margin-top: 20px;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6 text-center">
-            <h1 class="mb-4">Вход в игру</h1>
-            <div class="card shadow">
-                <div class="card-body">
-                    <form id="joinForm">
-                        <div class="mb-3">
-                            <input type="text"
-                                   id="pinCode"
-                                   class="form-control form-control-lg text-center"
-                                   placeholder="Введите PIN-код"
-                                   maxlength="6"
-                                   style="font-size: 2rem; letter-spacing: 5px;">
-                        </div>
-                        <button type="button" onclick="submitPin()" class="btn btn-primary btn-lg w-100">
-                            Присоединиться
-                        </button>
-                    </form>
-                    <div id="errorMessage" class="text-danger mt-3" style="display: none;"></div>
+<div class="join-wrapper">
+    <div class="col-12 col-sm-10 col-md-8 col-lg-5 col-xl-4">
+        <div class="join-card text-center">
+            <h1 class="academic-header">Доступ к сессии</h1>
+            <p class="academic-subtitle">Введите идентификационный код, предоставленный преподавателем</p>
+
+            <form id="joinForm">
+                <div class="mb-4">
+                    <input type="text"
+                           id="pinCode"
+                           class="form-control form-control-lg text-center pin-input"
+                           maxlength="6"
+                           autocomplete="off"
+                           style="font-size: 2.5rem; letter-spacing: 8px;">
                 </div>
-            </div>
+
+                <button type="button" onclick="submitPin()" class="btn btn-primary btn-lg w-100 btn-join">
+                    Присоединиться
+                </button>
+            </form>
+
+            <div id="errorMessage" class="error-box"></div>
         </div>
     </div>
 </div>
@@ -32,12 +124,11 @@ async function submitPin() {
     const pin = document.getElementById('pinCode').value;
     const errorDiv = document.getElementById('errorMessage');
 
-    // Делаем запрос к твоему API (ViewSet)
     const response = await fetch('/game/join_by_code/', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'X-CSRFToken': '{{ csrf_token }}' // Не забудь про CSRF!
+            'X-CSRFToken': '{{ csrf_token }}'
         },
         body: JSON.stringify({ pin_code: pin })
     });
@@ -45,13 +136,18 @@ async function submitPin() {
     const data = await response.json();
 
     if (response.ok) {
-        // Если код верный, перенаправляем на страницу игры
         window.location.href = `/game/play_game/${data.game_id}/`;
     } else {
-        // Если код неверный, показываем ошибку
         errorDiv.textContent = data.error;
         errorDiv.style.display = 'block';
     }
 }
+
+document.getElementById('pinCode').addEventListener('keypress', function (e) {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        submitPin();
+    }
+});
 </script>
 {% endblock %}

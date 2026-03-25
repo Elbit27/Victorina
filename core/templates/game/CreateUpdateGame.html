@@ -1,43 +1,70 @@
-{% extends "core/base.html" %}
-{% csrf_token %}
+{% extends 'core/base.html' %}
 {% load static %}
 
-{% block title %}Создание Викторины{% endblock %}
+{% block title %}{% if game %}Редактирование{% else %}Создание{% endif %} викторины | Lumos Academy{% endblock %}
 
 {% block css %}
 <link rel="stylesheet" href="{% static 'game/css/CreateUpdateGame.css' %}">
 {% endblock %}
 
 {% block content %}
-<div class="dashboard-container" style="max-width: 800px;">
-    <header class="dash-header">
-        <h1>Конструктор <span>Викторины</span></h1>
-        <a href="{% url 'ai-generate-page' %}" class="btn-ai-magic">
-            <span>✨ Сгенерировать с помощью ИИ</span>
-        </a>
-    </header>
+<div class="builder-wrapper py-5">
+    <div class="container" style="max-width: 900px;">
 
-    <div id="game-builder">
-        <div class="setup-card" style="margin-bottom: 20px;">
-            <label>Название викторины</label>
-            <input type="text" id="game-title" placeholder="Например: Знатоки Python" style="width: 100%; height: 50px; font-size: 18px; padding: 10px;">
-        </div>
-
-        <div id="questions-container">
+        <header class="builder-header d-flex justify-content-between align-items-center mb-5">
+            <div>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb mb-2">
+                        <li class="breadcrumb-item"><a href="{% url 'profile' %}" class="text-decoration-none">Профиль</a></li>
+                        <li class="breadcrumb-item active">Конструктор</li>
+                    </ol>
+                </nav>
+                <h1 class="builder-title">{% if game %}Правка{% else %}Создание{% endif %} <span>викторины</span></h1>
             </div>
 
-        <button type="button" class="btn-add" onclick="addQuestion()">+ Добавить вопрос</button>
+            <a href="{% url 'ai-generate-page' %}" class="btn-ai-magic">
+                <i class="bi bi-stars"></i> Сгенерировать через ИИ
+            </a>
+        </header>
 
-        <div class="form-footer">
-        <button id="submit-game" class="btn btn-primary">
-            {% if game %} Сохранить изменения {% else %} Создать викторину {% endif %}
-        </button>
+        <div id="game-builder">
+            <div class="setup-card mb-4 shadow-sm">
+                <div class="card-body p-4">
+                    <label class="form-label fw-bold text-uppercase small letter-spacing-1" style="color: var(--text-muted);">Название курса / темы</label>
+                    <input type="text"
+                           id="game-title"
+                           class="form-control form-control-lg custom-input"
+                           placeholder="Например: Основы Python и Django"
+                           value="{{ game.title|default:'' }}">
+                </div>
+            </div>
+
+            <div id="questions-container" class="mb-4">
+                </div>
+
+            <div class="builder-controls d-flex gap-3 mb-5">
+                <button type="button" class="btn-add-question w-100" onclick="addQuestion()">
+                    <i class="bi bi-plus-circle-fill me-2"></i>Добавить новый вопрос
+                </button>
+            </div>
+
+            <div class="builder-footer p-4 shadow-lg d-flex justify-content-between align-items-center">
+                <div class="text-muted small">
+                    <i class="bi bi-info-circle me-1"></i> Все изменения сохраняются в вашу библиотеку
+                </div>
+                <button id="submit-game" class="btn-save-game">
+                    {% if game %}
+                        <i class="bi bi-check-all me-2"></i>Сохранить изменения
+                    {% else %}
+                        <i class="bi bi-cloud-upload-fill me-2"></i>Опубликовать викторину
+                    {% endif %}
+                </button>
+            </div>
         </div>
     </div>
 </div>
 
 <script>
-    // Если игра есть — создаем объект, если нет — просто записываем null
     window.editGameData = {% if game %} {
         id: "{{ game.id }}",
         title: "{{ game.title|escapejs }}",
@@ -58,8 +85,6 @@
         ]
     } {% else %} null {% endif %};
 
-    console.log("Данные для редактора:", window.editGameData);
 </script>
 <script src="{% static 'game/js/CreateUpdateGame.js' %}"></script>
-
 {% endblock %}

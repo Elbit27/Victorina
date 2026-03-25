@@ -1,165 +1,180 @@
-/* --- НАВИГАЦИЯ --- */
-
-/* Контейнер колокольчика */
-.nav-notification-wrapper {
-    position: relative;
-    display: inline-block;
-    margin-right: 15px;
+:root {
+    --white: #ffffff;
+    --graphite: #2c3e50;
+    --sky-blue: #3498db;
+    --soft-gray: #f8f9fa;
+    --border-color: rgba(255, 255, 255, 0.1);
 }
 
-/* Иконка колокольчика (безцветная/серая по умолчанию) */
+.navbar-custom {
+    background-color: var(--graphite) !important; /* !important заставит его быть везде одинаковым */
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+body {
+    background-color: var(--white);
+    color: var(--graphite);
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+}
+
+.navbar-custom {
+    background-color: var(--graphite) !important;
+    border-bottom: 1px solid var(--border-color);
+    padding: 12px 0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-brand {
+    font-weight: 800;
+    letter-spacing: 1px;
+    color: var(--white) !important;
+}
+
+.brand-accent {
+    color: var(--sky-blue);
+}
+
+.nav-link {
+    color: rgba(255, 255, 255, 0.8) !important;
+    font-weight: 500;
+    margin: 0 10px;
+    transition: 0.3s;
+}
+
+.nav-link:hover {
+    color: var(--sky-blue) !important;
+}
+
 .notification-bell-icon {
-    color: #6c757d;
-    font-size: 1.4rem;
-    transition: color 0.3s ease;
+    font-size: 1.2rem;
+    color: var(--white);
 }
 
-.notification-bell-icon:hover {
-    color: #495057;
-}
-
-/* Красный индикатор (Badge) */
 .notification-badge {
-    position: absolute;
-    top: -2px;
-    right: -5px;
-    background-color: #dc3545; /* Красный */
+    display: none;
+    background-color: var(--sky-blue);
     color: white;
-    font-size: 0.65rem;
-    font-weight: bold;
+    font-size: 0.6rem;
     padding: 2px 6px;
     border-radius: 50%;
-    border: 2px solid #fff; /* Белая обводка, чтобы выделялся на фоне */
-    display: none; /* Скрыт, пока нет уведомлений */
+    position: absolute;
+    top: 5px;
+    right: 0;
+    min-width: 15px;
+    text-align: center;
 }
 
-/* Выпадающее меню уведомлений */
-.notification-dropdown-menu {
-    width: 320px;
-    max-height: 450px;
-    overflow-y: auto;
+.avatar-circle {
+    width: 35px;
+    height: 35px;
+    background-color: var(--sky-blue);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.btn-auth {
+    background-color: var(--sky-blue);
+    color: white;
     border: none;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-    border-radius: 12px;
-    padding: 0;
-    margin-top: 10px !important;
+    font-weight: 600;
+    padding: 8px 25px;
+    border-radius: 6px;
+    transition: 0.3s;
 }
 
-/* Заголовок меню */
+.btn-auth:hover {
+    background-color: #2980b9;
+    transform: translateY(-1px);
+}
+
+.dropdown-menu {
+    border: none;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    border-radius: 8px;
+}
+
+/* Контейнер выпадающего списка уведомлений */
+#notification-items {
+    width: 320px;
+    max-height: 400px;
+    overflow-y: auto;
+    padding: 0;
+    border: none;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+    background: var(--white);
+    border-radius: 12px;
+}
+
+/* Заголовок списка */
 .notification-header {
-    background-color: #f8f9fa;
     padding: 12px 16px;
-    font-weight: bold;
-    border-bottom: 1px solid #eee;
-    border-radius: 12px 12px 0 0;
+    background: var(--soft-gray);
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--graphite);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 /* Элемент уведомления */
 .notification-item {
     padding: 12px 16px;
-    border-bottom: 1px solid #f1f1f1;
-    transition: background-color 0.2s;
-    white-space: normal; /* Чтобы длинный текст переносился */
+    border-bottom: 1px solid rgba(0,0,0,0.03);
+    transition: background 0.2s ease;
+    cursor: pointer;
+    position: relative;
 }
 
 .notification-item:hover {
-    background-color: #f8f9fa;
+    background-color: rgba(52, 152, 219, 0.05); /* Легкий оттенок sky-blue */
 }
 
-.notification-item .time {
-    display: block;
-    font-size: 0.75rem;
-    color: #adb5bd;
-    margin-bottom: 4px;
+.notification-item:last-child {
+    border-bottom: none;
 }
 
+/* Текст сообщения */
 .notification-item .message {
-    font-size: 0.9rem;
-    color: #333;
+    font-size: 0.85rem;
+    color: var(--graphite);
     line-height: 1.4;
+    margin-top: 4px;
 }
 
-/* Пустое состояние */
-.notification-empty {
-    padding: 20px;
-    text-align: center;
-    color: #999;
-    font-style: italic;
+/* Время уведомления */
+.notification-item .time {
+    font-size: 0.7rem;
+    color: #95a5a6;
+    font-weight: 600;
+    text-transform: uppercase;
 }
 
-
-/* Убираем обводку у бургера */
-.navbar-toggler:focus {
-    box-shadow: none;
-    outline: none;
-}
-
-/* Круглый аватар пользователя */
-.avatar-circle {
-    width: 32px;
-    height: 32px;
-    background-color: #38bdf8;
-    color: #1c1e21;
+/* Точка "новое" (опционально) */
+.notification-item.unread::before {
+    content: '';
+    position: absolute;
+    left: 6px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 6px;
+    height: 6px;
+    background-color: var(--sky-blue);
     border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    font-size: 14px;
 }
 
-/* Кнопка "Создать игру" (Цвет 38bdf8) */
-.nav-create-btn {
-    color: #38bdf8 !important;
-    font-weight: 700 !important;
+/* Кастомизация скроллбара для списка */
+#notification-items::-webkit-scrollbar {
+    width: 6px;
 }
-
-.nav-create-btn:hover {
-    color: #7dd3fc !important;
-    background-color: rgba(56, 189, 248, 0.1) !important;
-}
-
-/* Кнопка "Выйти" (Серый цвет) */
-.nav-logout-btn {
-    color: #9ca3af !important;
-}
-
-.nav-logout-btn:hover {
-    color: #f3f4f6 !important;
-    background-color: rgba(255, 255, 255, 0.05) !important;
-}
-
-/* Настройки выпадающего меню на ПК */
-.dropdown-menu-dark {
-    border: 1px solid #444;
-    border-radius: 12px;
-    margin-top: 8px !important;
-}
-
-/* Адаптация под мобильные устройства */
-@media (max-width: 991px) {
-    .offcanvas {
-        width: 280px !important;
-    }
-
-    .offcanvas-body .nav-link {
-        font-size: 1.1rem;
-        padding: 15px 10px !important;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    }
-}
-
-/* Эффект наведения на обычные ссылки */
-.navbar-nav .nav-link:hover:not(.nav-create-btn):not(.nav-logout-btn) {
-    color: #38bdf8 !important;
-}
-
-/* --- ПОДВАЛ (FOOTER) --- */
-.main-footer {
-    background-color: #ffffff;
-    padding: 20px;
-    text-align: center;
-    color: #6b7280;
-    font-size: 14px;
-    border-top: 1px solid #e5e7eb;
+#notification-items::-webkit-scrollbar-thumb {
+    background: #dcdde1;
+    border-radius: 10px;
 }

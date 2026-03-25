@@ -1,149 +1,184 @@
-/* Основной фон (как в игре) */
-body {
-    background-color: white;
-    background-image: radial-gradient(circle at center, #60efff 0%, white 100%);
-    min-height: 100vh;
+:root {
+    --graphite: #2c3e50;
+    --sky-blue: #3498db;
+    --white: #ffffff;
+    --soft-gray: #f8f9fa;
+    --text-muted: #7f8c8d;
+    --border-color: #eef2f7;
+}
+
+.profile-wrapper {
     font-family: 'Inter', sans-serif;
 }
 
-.play-container {
-    width: 100%;
-    max-width: 1100px;
-    margin: 0 auto;
+/* ЛЕВАЯ КАРТОЧКА */
+.profile-side-card {
+    background: var(--white);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 40px 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.03);
 }
 
-/* Карточка профиля в стиле вопроса */
-.neon-question-card {
-    background-color: #212529 !important;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 30px;
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
-    color: white;
-}
-
-/* Аватар с неоновым кольцом */
-.profile-avatar-neon {
+.profile-main-avatar {
     width: 90px;
     height: 90px;
-    background: #38bdf8;
-    color: #212529;
+    background: var(--sky-blue);
+    color: white;
     font-size: 2.5rem;
     font-weight: 800;
-    border-radius: 50%;
-    display: inline-flex;
+    display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 0 25px rgba(56, 189, 248, 0.5);
-    border: 4px solid rgba(255, 255, 255, 0.1);
+    border-radius: 30px;
+    margin: 0 auto;
+    box-shadow: 0 10px 20px rgba(52, 152, 219, 0.2);
 }
 
-/* Сетка статистики */
-.stats-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 15px;
-}
-
-.stat-box {
-    background: rgba(255, 255, 255, 0.05);
-    padding: 15px;
-    border-radius: 20px;
-    border: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.stat-number {
-    font-size: 1.5rem;
+.user-name {
     font-weight: 800;
-    color: #38bdf8;
+    color: var(--graphite);
+    margin-bottom: 5px;
+}
+
+.user-email {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-bottom: 30px;
+}
+
+.stats-container {
+    background: var(--soft-gray);
+    border-radius: 15px;
+    padding: 20px 0;
+}
+
+.stat-value {
+    font-weight: 800;
+    font-size: 1.4rem;
+    color: var(--graphite);
 }
 
 .stat-label {
-    font-size: 0.7rem;
+    font-size: 0.75rem;
     text-transform: uppercase;
     letter-spacing: 1px;
-    color: #94a3b8;
+    color: var(--text-muted);
 }
 
-/* Карточка игры в списке */
-.game-item-neon {
-    background: #212529;
-    padding: 20px;
-    border-radius: 20px;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    transition: all 0.3s ease;
+.btn-logout-minimal {
+    display: inline-block;
+    color: #e74c3c;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: 0.3s;
+    padding: 10px 20px;
 }
 
-.game-item-neon:hover {
-    transform: translateX(10px);
-    border-color: #38bdf8;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+.btn-logout-minimal:hover {
+    background: #fff5f5;
+    border-radius: 10px;
 }
 
-/* Кнопки в стиле твоей игры */
-.answer-btn {
-    background-color: #38bdf8;
-    color: #212529 !important;
+/* ПРАВАЯ ЧАСТЬ - СПИСОК СЕССИЙ */
+.section-title {
     font-weight: 800;
-    border-radius: 12px;
-    box-shadow: 0 4px 0px #0ea5e9;
-    transition: all 0.2s;
+    color: var(--graphite);
 }
 
-.answer-btn:hover {
+.btn-create-new {
+    background: var(--graphite);
+    color: white;
+    padding: 10px 24px;
+    border-radius: 12px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: 0.3s;
+}
+
+.btn-create-new:hover {
+    background: #000;
+    color: white;
     transform: translateY(-2px);
-    background-color: #7dd3fc;
-    box-shadow: 0 6px 15px rgba(56, 189, 248, 0.4);
 }
 
-.btn-action-outline {
-    background: transparent;
-    border: 2px solid #4b5563;
-    color: #94a3b8 !important;
+.session-card {
+    background: var(--white);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 25px;
+    transition: 0.3s;
+}
+
+.session-card:hover {
+    border-color: var(--sky-blue);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+}
+
+.session-title {
     font-weight: 700;
-    padding: 8px 15px;
+    color: var(--graphite);
+    margin-bottom: 8px;
+}
+
+.session-meta {
+    display: flex;
+    gap: 15px;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.meta-pin {
+    background: #eef2f7;
+    padding: 3px 10px;
+    border-radius: 6px;
+    font-weight: 700;
+    color: var(--sky-blue);
+}
+
+/* КНОПКИ ДЕЙСТВИЙ */
+.btn-edit-session {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 45px;
+    height: 45px;
+    border-radius: 12px;
+    background: var(--soft-gray);
+    color: var(--graphite);
+    text-decoration: none;
+    margin-right: 10px;
+    transition: 0.3s;
+}
+
+.btn-edit-session:hover {
+    background: #dee2e6;
+    color: var(--graphite);
+}
+
+.btn-launch-session {
+    display: inline-flex;
+    align-items: center;
+    background: var(--sky-blue);
+    color: white;
+    padding: 12px 25px;
     border-radius: 12px;
     text-decoration: none;
-    transition: all 0.3s;
-}
-
-.btn-action-outline:hover {
-    border-color: #38bdf8;
-    color: #38bdf8 !important;
-}
-
-/* Счёт и бейджи */
-.live-score-badge {
-    background-color: #2d3339;
-    color: #38bdf8;
-    border-radius: 10px;
     font-weight: 700;
+    transition: 0.3s;
 }
 
-.badge-questions {
-    background: rgba(255, 255, 255, 0.05);
-    color: #94a3b8;
-    padding: 4px 12px;
-    border-radius: 10px;
-    font-size: 0.8rem;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+.btn-launch-session:hover {
+    background: #2980b9;
+    color: white;
+    box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
 }
 
-/* Кнопка логаута */
-.btn-logout-neon {
-    display: block;
-    width: 100%;
-    padding: 12px;
-    background: transparent;
-    border: 2px solid #ef4444;
-    color: #ef4444 !important;
-    font-weight: 700;
-    border-radius: 15px;
-    text-decoration: none;
-    transition: all 0.3s;
-}
-
-.btn-logout-neon:hover {
-    background: #ef4444;
-    color: white !important;
-    box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
+.empty-sessions {
+    background: var(--soft-gray);
+    border: 2px dashed #dee2e6;
+    border-radius: 20px;
+    color: var(--text-muted);
 }

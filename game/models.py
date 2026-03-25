@@ -13,7 +13,7 @@ class Game(models.Model):
         related_name="games"
     )
     created_at = models.DateTimeField(auto_now_add=True)
-    is_active = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
     pin_code = models.CharField(max_length=6, unique=True, blank=True, null=True)
 
     def save(self, *args, **kwargs):

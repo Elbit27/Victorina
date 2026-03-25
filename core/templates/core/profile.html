@@ -1,81 +1,82 @@
 {% extends 'core/base.html' %}
 {% load static %}
 
-{% block title %}Профиль{% endblock %}
-
+{% block title %}Личный кабинет | Lumos Academy{% endblock %}
 
 {% block css %}
 <link rel="stylesheet" href="{% static 'core/css/profile.css' %}">
 {% endblock %}
 
 {% block content %}
-<div class="play-container py-5">
+<div class="profile-wrapper py-5">
     <div class="row g-4">
-        <div class="col-md-4">
-            <div class="neon-question-card p-4 text-center h-100">
-                <div class="profile-avatar-container mb-4">
-                    <div class="profile-avatar-neon">
+        <div class="col-lg-4">
+            <div class="profile-side-card text-center">
+                <div class="avatar-wrapper mb-4">
+                    <div class="profile-main-avatar">
                         {{ user.username|slice:":1"|upper }}
                     </div>
                 </div>
 
-                <h2 class="question-text fs-3 mb-1">{{ user.username }}</h2>
-                <p class="text-blue-400 mb-4" style="color: #38bdf8; opacity: 0.8;">{{ user.email|default:"Email не указан" }}</p>
+                <h2 class="user-name">{{ user.username }}</h2>
+                <p class="user-email">{{ user.email|default:"academy.student@lumos.edu" }}</p>
 
-                <div class="stats-grid mb-4">
-                    <div class="stat-box">
-                        <div class="stat-number">{{ games_count }}</div>
-                        <div class="stat-label">Викторин</div>
+                <div class="stats-container row g-0">
+                    <div class="col-6 stat-item border-end">
+                        <div class="stat-value">{{ games.count }}</div>
+                        <div class="stat-label">Проектов</div>
                     </div>
-                    <div class="stat-box">
-                        <div class="stat-number">{{ user.date_joined|date:"Y" }}</div>
-                        <div class="stat-label">В клубе с</div>
+                    <div class="col-6 stat-item">
+                        <div class="stat-value">{{ user.date_joined|date:"Y" }}</div>
+                        <div class="stat-label">С нами</div>
                     </div>
                 </div>
 
-                <a href="{% url 'account_logout' %}" class="btn-logout-neon">
-                    Выйти из системы
-                </a>
+                <div class="profile-actions mt-4">
+                    <a href="/accounts/logout/" class="btn-logout-minimal">
+                        <i class="bi bi-box-arrow-right me-2"></i>Выйти из профиля
+                    </a>
+                </div>
             </div>
         </div>
 
-        <div class="col-md-8">
-            <div class="d-flex justify-content-between align-items-center mb-4 px-2">
-                <h3 class="question-text fs-4 mb-0" style="text-align: left;">Мои проекты</h3>
-                <a href="{% url 'game-create' %}" class="answer-btn py-2 px-4 shadow-sm" style="font-size: 0.9rem; text-decoration: none;">
-                    + Создать игру
+        <div class="col-lg-8">
+            <div class="content-header d-flex justify-content-between align-items-center mb-4">
+                <h3 class="section-title">Мои учебные сессии</h3>
+                <a href="{% url 'game-create' %}" class="btn-create-new">
+                    <i class="bi bi-plus-lg me-2"></i>Создать новую
                 </a>
             </div>
 
-            <div class="game-list-container">
+            <div class="sessions-grid">
                 {% if games %}
                     {% for game in games %}
-                    <div class="game-item-neon mb-3">
-                        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
-                            <div class="game-info-block">
-                                <h5 class="fw-bold mb-2" style="color: #fff; font-size: 1.25rem;">{{ game.title }}</h5>
-                                <div class="d-flex gap-2">
-                                    <span class="live-score-badge py-1 px-3" style="font-size: 0.8rem;">PIN: {{ game.pin_code }}</span>
-                                    <span class="badge-questions">
-                                        <i class="bi bi-layers"></i> {{ game.questions.count }} вопр.
-                                    </span>
+                    <div class="session-card mb-3">
+                        <div class="row align-items-center g-3">
+                            <div class="col-md-6">
+                                <h5 class="session-title">{{ game.title }}</h5>
+                                <div class="session-meta">
+                                    <span class="meta-pin"><i class="bi bi-key me-1"></i>{{ game.pin_code }}</span>
+                                    <span class="meta-qty"><i class="bi bi-layers me-1"></i>{{ game.questions.count }} вопросов</span>
                                 </div>
                             </div>
-
-                            <div class="game-actions-block d-flex gap-2">
-                                <a href="{% url 'game-update' game.id %}" class="btn-action-outline">
-                                    ✏️ Правка
-                                </a>
-                                <a href="{% url 'play_game' game.id %}" class="answer-btn py-2 px-3" style="font-size: 0.9rem; text-decoration: none;">
-                                    ▶ Запуск
-                                </a>
+                            <div class="col-md-6 text-md-end">
+                                <div class="action-group">
+                                    <a href="{% url 'game-update' game.id %}" class="btn-edit-session">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <a href="{% url 'play_game' game.id %}" class="btn-launch-session">
+                                        Запустить битву <i class="bi bi-play-fill ms-1"></i>
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
                     {% endfor %}
                 {% else %}
-                    <div class="empty-state-neon">
-                        <p class="mb-0">Здесь пока пусто. Начните свою историю побед!</p>
+                    <div class="empty-sessions text-center py-5">
+                        <i class="bi bi-folder2-open display-4 text-muted mb-3 d-block"></i>
+                        <p>У вас пока нет созданных сессий</p>
                     </div>
                 {% endif %}
             </div>

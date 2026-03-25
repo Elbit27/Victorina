@@ -1,50 +1,39 @@
 let questionCount = 0;
-let gameId = null;
-if (window.editGameData && window.editGameData.id) {
-    gameId = window.editGameData.id;
-}
+let gameId = window.editGameData?.id || null;
 
-document.addEventListener('DOMContentLoaded', () => {
-    const container = document.getElementById('questions-container');
-    const submitBtn = document.getElementById('submit-game');
-
-    if (window.editGameData) {
-        document.getElementById('game-title').value = window.editGameData.title;
-        submitBtn.innerText = "Сохранить изменения";
-        container.innerHTML = '';
-        window.editGameData.questions.forEach(q => addQuestion(q));
-    } else {
-        addQuestion();
-    }
-});
-
-function addQuestion(data = null) {
+// 1. Функции в глобальной области (чтобы работали onclick в HTML)
+window.addQuestion = function(data = null) {
     questionCount++;
     const qId = questionCount;
     const container = document.getElementById('questions-container');
 
     const qHtml = `
-        <div class="question-card" id="q-${qId}" data-id="${qId}" style="border: 1px solid #ddd; padding: 15px; margin-bottom: 20px; border-radius: 10px; background: #f9f9f9;">
-            <div class="d-flex justify-content-between" style='height:2pc'>
-                <strong>Вопрос №${questionCount}</strong>
-                <span class="text-danger" style="cursor:pointer" onclick="document.getElementById('q-${questionCount}').remove()">Удалить</span>
+        <div class="question-card shadow-sm mb-4" id="q-${qId}" data-id="${qId}">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center border-bottom-0 pt-4 px-4">
+                <span class="badge bg-soft-blue text-primary">Вопрос №${qId}</span>
+                <button type="button" class="btn-delete-q" onclick="document.getElementById('q-${qId}').remove()">
+                    <i class="bi bi-trash"></i> Удалить
+                </button>
             </div>
-            <input type="text" class="q-text form-control mb-2" placeholder="Текст вопроса"
-                   value="${data ? data.text : ''}">
 
+            <div class="card-body px-4 pb-4">
+                <textarea class="q-text form-control custom-input mb-3" rows="2" placeholder="Введите текст вопроса...">${data ? data.text : ''}</textarea>
 
-            <div class="image-upload-section" style="margin-top: 10px;">
-                <label>Изображение (необязательно):</label>
-                <input type="file" class="question-image form-control" accept="image/*" onchange="previewImage(this)">
-                <div class="image-preview" style="margin-top: 5px; display: ${data && data.image ? 'block' : 'none'};">
-                    <img src="${data && data.image ? data.image : ''}" style="max-width: 150px; border-radius: 8px;">
+                <div class="image-upload-wrapper mb-3">
+                    <label class="form-label small fw-bold text-muted">Изображение вопроса</label>
+                    <input type="file" class="question-image form-control form-control-sm" accept="image/*" onchange="previewImage(this)">
+                    <div class="image-preview mt-2" style="display: ${data && data.image ? 'block' : 'none'};">
+                        <img src="${data && data.image ? data.image : ''}" class="rounded img-thumbnail" style="max-height: 150px;">
+                    </div>
                 </div>
-            </div>
 
-            <div class="answers-section mt-3">
-                <h6>Варианты ответов:</h6>
-                <div class="answers-list"></div>
-                <button type="button" class="btn btn-sm btn-outline-secondary mt-2" onclick="addAnswer(this, ${qId})">+ Добавить ответ</button>
+                <div class="answers-section">
+                    <label class="form-label small fw-bold text-muted">Варианты ответов</label>
+                    <div class="answers-list"></div>
+                    <button type="button" class="btn btn-sm btn-link text-decoration-none p-0 mt-2" onclick="addAnswer(this, ${qId})">
+                        <i class="bi bi-plus-circle"></i> Добавить вариант
+                    </button>
+                </div>
             </div>
         </div>
     `;
@@ -61,89 +50,127 @@ function addQuestion(data = null) {
     }
 }
 
-function addAnswer(btn, qId, listContainer = null, data = null) {
-    // Исправленный поиск контейнера: ищем именно .answers-list
-    const list = listContainer || btn.parentElement.querySelector('.answers-list');
+window.addAnswer = function(btn, qId, listContainer = null, data = null) {
+    const list = listContainer || btn.closest('.answers-section').querySelector('.answers-list');
 
     const aHtml = `
-        <div class="answer-row d-flex align-items-center mb-2">
-            <input type="radio" name="correct-${qId}" class="is-correct me-2" ${data && data.is_correct ? 'checked' : ''}>
-            <input type="text" class="a-text form-control form-control-sm me-2" placeholder="Ответ"
-                   value="${data ? data.text : ''}">
-            <span style="cursor:pointer; color:red; font-weight:bold;" onclick="this.parentElement.remove()">×</span>
+        <div class="answer-row d-flex align-items-center mb-2 animate__animated animate__fadeIn">
+            <div class="form-check me-2">
+                <input type="radio" name="correct-${qId}" class="is-correct form-check-input" ${data && data.is_correct ? 'checked' : ''}>
+            </div>
+            <input type="text" class="a-text form-control form-control-sm custom-input" placeholder="Вариант ответа" value="${data ? data.text : ''}">
+            <button type="button" class="btn btn-sm text-danger ms-2" onclick="this.parentElement.remove()">
+                <i class="bi bi-x-lg"></i>
+            </button>
         </div>`;
     list.insertAdjacentHTML('beforeend', aHtml);
 }
 
-document.getElementById('submit-game').addEventListener('click', async function() {
-    const formData = new FormData();
-    const title = document.getElementById('game-title').value;
+window.previewImage = function(input) {
+    const previewDiv = input.nextElementSibling;
+    const img = previewDiv.querySelector('img');
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            img.src = e.target.result;
+            previewDiv.style.display = 'block';
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+}
 
-    if (!title) {
-        alert("Пожалуйста, введите название викторины");
-        return;
+// 2. Инициализация при загрузке страницы
+document.addEventListener('DOMContentLoaded', () => {
+    const container = document.getElementById('questions-container');
+    const submitBtn = document.getElementById('submit-game');
+
+    // Если редактируем — заполняем данными
+    if (window.editGameData) {
+        document.getElementById('game-title').value = window.editGameData.title;
+        container.innerHTML = '';
+        window.editGameData.questions.forEach(q => addQuestion(q));
+    } else {
+        addQuestion();
     }
 
-    formData.append('title', title);
-    const questionsData = [];
+    // 3. САМОЕ ГЛАВНОЕ: Кнопка сохранения
+    // Обработка сохранения
+    submitBtn.addEventListener('click', async () => {
+        const formData = new FormData();
+        const title = document.getElementById('game-title').value;
 
-    document.querySelectorAll('.question-card').forEach((qCard, qIndex) => {
-        // ИСПОЛЬЗУЕМ .q-text (как в шаблоне addQuestion)
-        const qTextInput = qCard.querySelector('.q-text');
-        if (!qTextInput) return;
+        if (!title) return alert("Введите название!");
 
-        const answers = [];
-        qCard.querySelectorAll('.answer-row').forEach(aRow => {
-            const aTextInput = aRow.querySelector('.a-text');
-            const isCorrectInput = aRow.querySelector('.is-correct');
-            if (aTextInput) {
-                answers.push({
-                    text: aTextInput.value,
-                    is_correct: isCorrectInput.checked
-                });
+        formData.append('title', title);
+        const questionsData = [];
+
+        document.querySelectorAll('.question-card').forEach((qCard, qIndex) => {
+            const qTextInput = qCard.querySelector('.q-text');
+            const answers = [];
+
+            qCard.querySelectorAll('.answer-row').forEach(aRow => {
+                const aTextInput = aRow.querySelector('.a-text');
+                const isCorrectInput = aRow.querySelector('.is-correct');
+                if (aTextInput && aTextInput.value.trim() !== '') {
+                    answers.push({
+                        text: aTextInput.value,
+                        is_correct: isCorrectInput.checked
+                    });
+                }
+            });
+
+            const questionObj = {
+                text: qTextInput.value,
+                answers: answers,
+                image_key: null
+            };
+
+            const imageInput = qCard.querySelector('.question-image');
+            if (imageInput?.files[0]) {
+                const key = `image_${qIndex}`;
+                formData.append(key, imageInput.files[0]);
+                questionObj.image_key = key;
             }
+
+            questionsData.push(questionObj);
         });
 
-        questionsData.push({
-            text: qTextInput.value,
-            answers: answers
-            image_key: null
-        });
+        formData.append('questions_json', JSON.stringify(questionsData));
 
-        const imageInput = qCard.querySelector('.question-image');
-        if (imageInput && imageInput.files[0]) {
-            const key = `image_${qIndex}`; // Уникальный ключ
-            formData.append(key, imageInput.files[0]);
-            questionObj.image_key = key; // Записываем ключ в JSON
+        try {
+            // ПРАВИЛЬНЫЕ ПУТИ СОГЛАСНО ТВОЕМУ urls.py
+            // Создание: POST /game/
+            // Редактирование: PUT /game/ID/
+            const url = gameId ? `/game/${gameId}/` : '/game/';
+            const method = gameId ? 'PUT' : 'POST';
+
+            console.log(`Отправка на ${url} методом ${method}`);
+
+            const response = await fetch(url, {
+                method: method,
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken')
+                    // Content-Type НЕ ставим, для FormData он ставится автоматически
+                },
+                body: formData
+            });
+
+            if (response.ok) {
+                // После успешного сохранения редиректим на список игр или в профиль
+                window.location.href = '/game/profile/';
+            } else {
+                const errData = await response.json();
+                console.error("Ошибка API:", errData);
+                alert("Ошибка при сохранении: " + JSON.stringify(errData));
+            }
+        } catch (e) {
+            console.error("Ошибка сети или парсинга:", e);
+            alert("Не удалось связаться с сервером.");
         }
     });
-
-    formData.append('questions_json', JSON.stringify(questionsData));
-
-    const isEdit = gameId !== null;
-    const url = isEdit ? `/game/${gameId}/` : '/game/';
-    const method = isEdit ? 'PUT' : 'POST';
-
-    try {
-        const response = await fetch(url, {
-            method: method,
-            headers: {
-                'X-CSRFToken': getCookie('csrftoken')
-            },
-            body: formData
-        });
-
-        if (response.ok) {
-            window.location.href = '/game/game_list/';
-        } else {
-            const err = await response.json();
-            alert("Ошибка: " + JSON.stringify(err));
-        }
-    } catch (e) {
-        console.error("Ошибка при отправке:", e);
-    }
 });
 
+// Утилита для получения CSRF токена
 function getCookie(name) {
     let cookieValue = null;
     if (document.cookie && document.cookie !== '') {
@@ -157,20 +184,4 @@ function getCookie(name) {
         }
     }
     return cookieValue;
-}
-
-function previewImage(input) {
-    const previewDiv = input.nextElementSibling;
-    const img = previewDiv.querySelector('img');
-
-    if (input.files && input.files[0]) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            img.src = e.target.result;
-            previewDiv.style.display = 'block';
-        };
-        reader.readAsDataURL(input.files[0]);
-    } else {
-        previewDiv.style.display = 'none';
-    }
 }

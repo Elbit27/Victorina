@@ -1,284 +1,311 @@
-/* Основной контейнер */
+/* ПАЛИТРА LUMOS ACADEMY */
+:root {
+    --graphite: #2c3e50;
+    --sky-blue: #3498db;
+    --white: #ffffff;
+    --soft-gray: #f8f9fa;
+    --border-color: #dee2e6;
+    --success-green: #2ecc71;
+}
+
 .play-container {
-    width: 100%;
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 10px;
-    box-sizing: border-box;
+    max-width: 900px;
+    margin: 40px auto;
+    font-family: 'Inter', sans-serif;
 }
 
-/* Карточка вопроса и лобби */
+/* ЛОББИ И ОБЩИЕ БЛОКИ */
 .question-box, .result-card {
-    background: white;
-    padding: clamp(15px, 5vw, 40px);
-    border-radius: 24px;
-    box-shadow: 0 15px 35px rgba(0,0,0,0.1);
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-/* Счёт игры сверху */
-.live-score {
-    font-size: clamp(1.1rem, 5vw, 1.5rem);
-    font-weight: 800;
-    background: #1e293b;
-    color: white;
-    padding: 15px;
-    border-radius: 50px;
-    margin-bottom: 20px;
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-}
-
-/* Лобби: Список команд */
-.team-layout {
-    display: flex;
-    flex-direction: column; /* На мобилках - команды друг под другом */
-    gap: 20px;
-    margin: 25px 0;
-}
-
-@media (min-width: 600px) {
-    .team-layout {
-        flex-direction: row; /* На планшетах и ПК - в ряд */
-        justify-content: space-around;
-    }
-}
-
-.team-a-container, .team-b-container {
-    flex: 1;
-    background: #f8fafc;
-    padding: 15px;
-    border-radius: 15px;
-    border: 1px solid #e2e8f0;
-}
-
-.team-a-container h3 { color: #0866ff; }
-.team-b-container h3 { color: #f43f5e; }
-
-/* Кнопки выбора команд */
-.team-controls {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    margin-bottom: 20px;
-}
-
-.btn-team-a, .btn-team-b {
-    border: none;
-    padding: 15px;
-    border-radius: 12px;
-    color: white;
-    font-weight: 700;
-    cursor: pointer;
-    transition: transform 0.2s;
-}
-
-.btn-team-a { background: #0866ff; }
-.btn-team-b { background: #f43f5e; }
-
-/* Сетка ответов */
-.answers-grid {
-    display: grid;
-    grid-template-columns: 1fr; /* На мобилках один ответ на строку */
-    gap: 12px;
-    margin-top: 25px;
-}
-
-@media (min-width: 500px) {
-    .answers-grid {
-        grid-template-columns: 1fr 1fr; /* На ПК 2x2 */
-    }
-}
-
-.answer-btn {
-    background: #f1f5f9;
-    border: 2px solid #e2e8f0;
-    padding: 20px;
+    background: var(--white);
     border-radius: 16px;
+    padding: 40px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.05);
+    border: 1px solid var(--border-color);
+}
+
+h2 {
+    color: var(--graphite);
+    font-weight: 800;
+}
+
+/* ПАНЕЛЬ ПРЕПОДАВАТЕЛЯ */
+.admin-panel {
+    border: 1px solid var(--sky-blue) !important;
+    background-color: #f0f7ff !important;
+}
+
+.admin-panel h5 {
+    color: var(--sky-blue);
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+}
+
+/* КОМАНДЫ В ЛОББИ */
+.team-card {
+    background: var(--soft-gray);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 20px;
+    transition: all 0.2s ease;
+}
+
+.team-card:hover {
+    border-color: var(--sky-blue);
+    transform: translateY(-3px);
+}
+
+/* КНОПКИ */
+.launch-btn {
+    background-color: var(--sky-blue);
+    color: var(--white);
+    border: none;
+    padding: 18px;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
+}
+
+.launch-btn:hover {
+    background-color: #2980b9;
+    box-shadow: 0 10px 20px rgba(52, 152, 219, 0.2);
+}
+
+/* ИНТЕРФЕЙС ТЕСТИРОВАНИЯ (ВОПРОСЫ) */
+#main-game-ui {
+    background-color: var(--white) !important;
+    color: var(--graphite) !important;
+    padding: 0 !important;
+}
+
+.neon-question-card {
+    background: var(--white) !important;
+    border: 2px solid var(--soft-gray);
+    border-radius: 16px !important;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05) !important;
+}
+
+.question-text {
+    font-size: 1.8rem;
+    color: var(--graphite);
+    line-height: 1.4;
+}
+
+/* ВАРИАНТЫ ОТВЕТОВ */
+.answer-btn {
+    background: var(--soft-gray);
+    border: 2px solid var(--border-color);
+    color: var(--graphite);
+    padding: 20px;
+    border-radius: 12px;
     font-size: 1.1rem;
-    font-weight: 600;
-    cursor: pointer;
+    font-weight: 500;
+    text-align: left;
     transition: all 0.2s;
 }
 
 .answer-btn:hover {
-    border-color: #0866ff;
-    background: #eff6ff;
+    background: #eef2f5;
+    border-color: var(--sky-blue);
+    color: var(--sky-blue);
 }
 
-/* Прогресс-бар */
-.progress-container {
-    width: 100%;
-    height: 10px;
-    background: #e2e8f0;
-    border-radius: 10px;
-    overflow: hidden;
-    margin-bottom: 15px;
+.answer-btn.selected {
+    background: var(--sky-blue);
+    color: var(--white);
+    border-color: var(--sky-blue);
 }
 
-.progress-bar {
-    height: 100%;
-    background: #0866ff;
-    width: 0%;
-    transition: width 0.3s;
-}
-
-/* Кнопка запуска */
-.launch-btn {
-    width: 100%;
-    background: #42b72a;
-    color: white;
-    border: none;
-    padding: 18px;
-    border-radius: 12px;
-    font-size: 1.2rem;
-    font-weight: 700;
-    cursor: pointer;
-}
-
-.status-msg {
-    font-size: 0.95rem;
+/* ТАБЛО БАЛЛОВ */
+#live-scores .score-item {
+    background: var(--graphite);
+    color: var(--white);
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 0.9rem;
     font-weight: 600;
-    min-height: 20px; /* Чтобы контент не прыгал при появлении текста */
-    margin: -5px 0 15px 0;
-    transition: all 0.3s ease;
 }
 
-/* Анимация появления для привлечения внимания */
-.status-msg:not(:empty) {
-    animation: flashMsg 0.5s ease-out;
-}
-
-@keyframes flashMsg {
-    0% { opacity: 0; transform: scale(0.95); }
-    100% { opacity: 1; transform: scale(1); }
-}
-
-/* Стиль для экрана результатов */
-#result-screen {
-    background: radial-gradient(circle at top, #1e3a8a 0%, #0f172a 100%);
-    min-height: 100vh;
-    color: white;
-    font-family: 'Inter', sans-serif; /* Если есть возможность, подключи этот шрифт */
-}
-
-.result-card {
-    background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 24px;
-    padding: 2rem;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-}
-
-.winner-title {
-    font-weight: 800;
-    letter-spacing: -1px;
-    background: linear-gradient(to right, #fbbf24, #f59e0b);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    text-transform: uppercase;
-}
-
-.player-row {
-    transition: all 0.3s ease;
+/* ИЗОБРАЖЕНИЕ К ВОПРОСУ */
+#question-image {
+    max-width: 100%;
     border-radius: 12px;
-    margin-bottom: 8px;
-    background: rgba(255, 255, 255, 0.03);
+    margin-bottom: 25px;
+    border: 1px solid var(--border-color);
 }
 
-.player-row:hover {
-    background: rgba(255, 255, 255, 0.08);
-    transform: translateX(5px);
+/* ЭКРАН РЕЗУЛЬТАТОВ */
+.result-card {
+    border-top: 5px solid var(--success-green);
+}
+
+.celebration-icon {
+    font-size: 4rem;
+}
+
+.final-score-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px;
+    border-bottom: 1px solid var(--border-color);
+    font-size: 1.2rem;
+}
+
+.final-score-row:last-child {
+    border-bottom: none;
+}
+
+.final-score-row.winner {
+    background-color: #f0fff4;
+    color: var(--success-green);
+    font-weight: 700;
+    border-radius: 8px;
+}
+
+/* АНИМАЦИИ */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.play-container > div {
+    animation: fadeIn 0.5s ease forwards;
+}
+
+.badge score-badge rounded-pill fs-6 {
+    color: black;
+}
+
+/* --- СТИЛИ ДЛЯ ДИНАМИЧЕСКИХ ШАБЛОНОВ (JS) --- */
+
+/* Карточка команды в лобби */
+#teams-container .card {
+    border: none;
+    border-radius: 12px;
+    background: var(--white);
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+#teams-container .card.border-primary {
+    box-shadow: 0 4px 15px rgba(52, 152, 219, 0.1);
+    border: 1px solid #e1e8ed !important;
+}
+
+#teams-container .card.border-success {
+    box-shadow: 0 4px 20px rgba(46, 204, 113, 0.15);
+    border: 2px solid var(--success-green) !important;
+}
+
+/* Заголовки команд */
+#teams-container .card-header {
+    padding: 15px 20px;
+    font-weight: 700;
+    font-size: 1.1rem;
+    border: none;
+}
+
+#teams-container .card-header.bg-primary {
+    background-color: var(--graphite) !important; /* Делаем шапки команд графитовыми */
+}
+
+#teams-container .card-header.bg-success {
+    background-color: var(--success-green) !important;
+}
+
+/* Список студентов внутри команды */
+#teams-container ul.list-unstyled {
+    margin: 0;
+    padding: 10px 0;
+}
+
+#teams-container ul.list-unstyled li {
+    padding: 8px 20px;
+    border-bottom: 1px solid #f1f1f1;
+    color: var(--graphite);
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+}
+
+#teams-container ul.list-unstyled li:last-child {
+    border-bottom: none;
+}
+
+#teams-container ul.list-unstyled li::before {
+    margin-right: 10px;
+    font-size: 1rem;
+}
+
+/* Кнопка "Вступить" / "Вы здесь" */
+#teams-container .btn-outline-primary {
+    border: 2px solid var(--sky-blue);
+    color: var(--sky-blue);
+    font-weight: 700;
+    border-radius: 8px;
+    margin: 15px;
+    width: calc(100% - 30px) !important;
+}
+
+#teams-container .btn-outline-primary:hover {
+    background-color: var(--sky-blue);
+    color: var(--white);
+}
+
+#teams-container .btn-outline-success.disabled {
+    background-color: var(--success-green);
+    border-color: var(--success-green);
+    color: var(--white);
+    opacity: 1;
+    cursor: default;
+}
+
+/* --- СТИЛИ ДЛЯ ИГРОВОГО ПРОЦЕССА --- */
+
+/* Значки счета (Live Scores) */
+.live-score-badge {
+    background-color: var(--graphite) !important;
+    color: var(--white) !important;
+    padding: 10px 20px !important;
+    font-size: 1rem !important;
+    font-weight: 600 !important;
+    border: 1px solid rgba(255,255,255,0.1);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+}
+
+/* Сообщения статуса (Ошибки/Успех) */
+#game-status-msg {
+    font-size: 1.2rem;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    min-height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Ранг игрока в результатах */
+.rank-circle {
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    font-family: 'Inter', sans-serif;
 }
 
 .score-badge {
-    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-    border: none;
-    padding: 0.5rem 1rem;
-    font-weight: 600;
+    background-color: var(--soft-gray);
+    color: var(--graphite);
+    border: 1px solid var(--border-color);
+    padding: 8px 15px !important;
 }
 
-.btn-restart {
-    background: white;
-    color: #0f172a;
-    font-weight: 700;
-    border-radius: 14px;
-    padding: 12px 40px;
-    transition: all 0.2s;
+.player-row {
+    border-bottom: 1px solid #eee;
+    transition: background 0.2s;
 }
 
-.btn-restart:hover {
-    transform: scale(1.05);
-    background: #f1f5f9;
-}
-
-/* Основной фон теперь светлый и "дышащий" */
-body {
-    background-color: #38bdf8 !important;
-    background-image: radial-gradient(circle at center, #60efff 0%, #38bdf8 100%);
-    min-height: 100vh;
-}
-
-/* Карточка вопроса теперь глубокая графитовая — на ней всё будет "гореть" */
-.neon-question-card {
-    background-color: #212529 !important; /* Твой графитовый */
-    border: 2px solid rgba(255, 255, 255, 0.1);
-    border-radius: 30px;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
-}
-
-/* ФОТО: Теперь оно без рамки, но с мягким "внутренним" свечением фона */
-#question-image {
-    max-width: 100%;
-    max-height: 380px;
-    border-radius: 20px;
-    border: 4px solid #38bdf8; /* Голубая рамка на темном фоне карточки */
-    box-shadow: 0 0 30px rgba(56, 189, 248, 0.4);
-    display: block;
-    margin: 0 auto;
-}
-
-/* ТЕКСТ: Белый на графитовом фоне */
-.question-text {
-    color: #ffffff;
-    font-size: 2rem;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-}
-
-/* КНОПКИ: Теперь они залиты голубым, а текст на них — графитовый */
-.answer-btn {
-    background-color: #38bdf8;
-    border: none;
-    color: #212529; /* Графитовый текст на голубом фоне */
-    font-weight: 800;
-    font-size: 1.1rem;
-    padding: 18px;
-    border-radius: 15px;
-    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    box-shadow: 0 4px 0px #0ea5e9; /* Эффект 3D кнопки */
-}
-
-.answer-btn:hover {
-    transform: translateY(-3px);
-    background-color: #7dd3fc;
-    box-shadow: 0 7px 15px rgba(56, 189, 248, 0.5);
-    color: #212529;
-}
-
-.answer-btn:active {
-    transform: translateY(2px);
-    box-shadow: 0 2px 0px #0ea5e9;
-}
-
-/* СЧЕТ: Графитовые плашки на голубом фоне страницы */
-.live-score-badge {
-    background-color: #212529;
-    color: #38bdf8;
-    border: none;
-    font-weight: bold;
-    padding: 10px 20px;
-    box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+.player-row:hover {
+    background-color: var(--soft-gray);
 }

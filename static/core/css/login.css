@@ -1,160 +1,286 @@
-/* Контейнер-обертка */
+:root {
+    --primary-blue: #3498db;
+    --dark-graphite: #2c3e50;
+    --white: #ffffff;
+    --error-red: #f02849;
+}
+
 .login-wrapper {
-    background-color: #f0f2f5;
-    width: 100%;
     min-height: 100vh;
     display: flex;
-    justify-content: center;
     align-items: center;
-    padding: 20px 10px; /* Убрал жесткий padding-bottom 100px для мобилок */
+    justify-content: center;
+    font-family: 'Inter', sans-serif;
+    padding: 20px;
 }
 
 .login-container {
     display: flex;
-    flex-direction: column; /* На мобилках - столбиком */
+    max-width: 900px;
     width: 100%;
-    max-width: 980px; /* На ПК не шире 980px */
-    justify-content: space-between;
     align-items: center;
+    gap: 50px;
 }
 
-/* ЛЕВАЯ КОЛОНКА */
+/* Левая часть: Брендинг */
 .brand-section {
-    width: 100%;
-    max-width: 500px;
-    padding-right: 0;
-    text-align: center; /* Центрируем текст на мобилке */
-    margin-bottom: 40px;
+    flex: 1;
+    color: var(--dark-graphite);
 }
 
 .brand-logo {
-    color: #0866ff;
-    font-size: clamp(40px, 10vw, 60px); /* Уменьшается на маленьких экранах */
+    font-size: 3.5rem;
     font-weight: 800;
-    margin: 0;
-    letter-spacing: -2px;
+    letter-spacing: -1.5px;
+    margin-bottom: 15px;
+}
+
+.brand-logo span {
+    color: var(--primary-blue);
 }
 
 .brand-tagline {
-    font-size: clamp(18px, 5vw, 28px); /* Гибкий размер шрифта */
-    line-height: 1.2;
-    font-weight: normal;
-    color: #1c1e21;
-    margin-top: 10px;
+    font-size: 1.1rem;
+    line-height: 1.6;
+    opacity: 0.8;
+    max-width: 400px;
 }
 
-/* ПРАВАЯ КОЛОНКА */
+/* Правая часть: Форма */
 .form-section {
-    width: 100%;
-    max-width: 396px;
+    flex: 1;
 }
 
 .login-card {
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, .1), 0 8px 16px rgba(0, 0, 0, .1);
-    padding: 16px;
-    text-align: center;
+    background: var(--white);
+    padding: 40px;
+    border-radius: 16px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
 }
 
-/* Поля ввода и кнопки */
+.input-group {
+    margin-bottom: 15px;
+    position: relative;
+}
+
 .input-group input {
     width: 100%;
-    height: 52px;
     padding: 14px 16px;
-    font-size: 17px;
-    border: 1px solid #dddfe2;
-    border-radius: 6px;
-    margin-bottom: 12px;
-    box-sizing: border-box;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
 }
 
-.login-btn {
-    width: 100%;
-    background-color: #0866ff;
-    border: none;
-    border-radius: 6px;
-    color: #fff;
-    font-size: 20px;
-    font-weight: 700;
-    padding: 10px 0;
-    margin-top: 4px;
+.input-group input:focus {
+    border-color: var(--primary-blue);
+    box-shadow: 0 0 0 4px rgba(52, 152, 219, 0.1);
+    outline: none;
 }
 
-.create-account-btn {
-    background-color: #42b72a;
-    border-radius: 6px;
-    color: #fff;
-    font-size: 17px;
-    font-weight: 700;
-    padding: 0 16px;
-    line-height: 48px;
-    display: inline-block;
-    text-decoration: none;
-}
-
-/* --- ПЕРЕКЛЮЧЕНИЕ НА ГОРИЗОНТАЛЬНЫЙ ВИД ДЛЯ ПК --- */
-@media (min-width: 900px) {
-    .login-container {
-        flex-direction: row; /* В ряд */
-        align-items: flex-start;
-        padding-top: 60px;
-    }
-
-    .brand-section {
-        text-align: left;
-        padding-right: 32px;
-        margin-top: 40px;
-    }
-
-    .login-wrapper {
-        padding-bottom: 150px;
-    }
-}
-
-/* Контейнер должен иметь ту же высоту, что и инпут без внешних отступов */
+/* Глазик (показать пароль) */
 .password-field {
     position: relative;
-    display: flex; /* Добавляем flex */
-    align-items: center; /* Центрируем содержимое по вертикали */
-    width: 100%;
-    margin-bottom: 12px; /* Переносим отступ инпута сюда */
-}
-
-.password-field input {
-    margin-bottom: 0 !important; /* Убираем отступ у самого инпута, чтобы он не тянул контейнер вниз */
-    width: 100%;
 }
 
 .toggle-password-btn {
     position: absolute;
     right: 12px;
-    /* Убираем top: 50% и transform, так как flex в родителе сделает работу лучше */
+    top: 50%;
+    transform: translateY(-50%);
     background: none;
     border: none;
-    padding: 0;
     color: #606770;
     cursor: pointer;
-    z-index: 5;
-    height: 100%; /* Растягиваем кнопку на всю высоту, чтобы область нажатия была больше */
-    display: flex;
-    align-items: center;
-    justify-content: center;
+}
+
+/* Кнопки */
+.login-btn {
+    width: 100%;
+    background-color: var(--primary-blue);
+    color: white;
+    padding: 14px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s;
+    margin-top: 10px;
+}
+
+.login-btn:hover {
+    background-color: #2980b9;
 }
 
 .login-helpers {
     display: flex;
-    justify-content: space-between; /* Расталкивает по краям */
+    justify-content: space-between;
     margin-top: 15px;
-    margin-bottom: 5px;
+    font-size: 0.9rem;
 }
 
 .helper-link {
-    font-size: 14px;
-    color: #606770; /* Тот самый серый цвет Facebook */
+    color: var(--primary-blue);
     text-decoration: none;
+    font-weight: 500;
 }
 
 .helper-link:hover {
     text-decoration: underline;
+}
+
+.form-divider {
+    margin: 25px 0;
+    border: 0;
+    border-top: 1px solid #eee;
+}
+
+/* Кнопка Google */
+.create-account-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #dadce0;
+    border-radius: 8px;
+    background: white;
+    color: #3c4043;
+    text-decoration: none;
+    font-weight: 500;
+    transition: background 0.2s;
+}
+
+.create-account-btn:hover {
+    background-color: #f8f9fa;
+    border-color: #d2e3fc;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .login-container {
+        flex-direction: column;
+        text-align: center;
+        gap: 30px;
+    }
+    .brand-tagline {
+        margin: 0 auto;
+    }
+}
+
+/* ==========================================================================
+   РАСШИРЕНИЕ ДЛЯ UNIFY ACADEMY (Global Auth Styles)
+   ========================================================================== */
+
+/* Обновление брендинга */
+.brand-logo {
+    font-family: 'Inter', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 800;
+    letter-spacing: -1.5px;
+    margin-bottom: 15px;
+    color: var(--dark-graphite);
+    text-transform: lowercase;
+}
+
+.brand-logo span {
+    color: var(--primary-blue);
+    font-weight: 300; /* Тонкое начертание для academy создает стиль */
+}
+
+/* Специфическая карточка подтверждения Google */
+.google-confirm-card {
+    text-align: center;
+    padding: 50px 40px;
+    max-width: 480px;
+    margin: 0 auto;
+    animation: authFadeIn 0.5s ease-out;
+}
+
+.google-icon-wrapper {
+    background: #f8f9fa;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    border: 1px solid #edf2f7;
+    transition: transform 0.3s ease;
+}
+
+.google-icon-wrapper:hover {
+    transform: scale(1.05);
+}
+
+.google-icon-big {
+    width: 40px;
+    height: 40px;
+}
+
+/* Текстовые блоки */
+.auth-subtitle {
+    font-weight: 700;
+    color: var(--dark-graphite);
+    margin-bottom: 12px;
+    font-size: 1.25rem;
+}
+
+.confirm-text {
+    color: #64748b;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin-bottom: 30px;
+}
+
+.confirm-text strong {
+    color: var(--primary-blue);
+    font-weight: 600;
+}
+
+/* Кнопки и ссылки */
+.cancel-link {
+    display: inline-block;
+    margin-top: 20px;
+    color: #94a3b8 !important;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.2s;
+    text-decoration: none;
+}
+
+.cancel-link:hover {
+    color: var(--error-red) !important; /* Красный при наведении на "отмену" — хороший паттерн */
+}
+
+/* Состояния ошибок (улучшено) */
+.error-summary {
+    background: #fff5f5 !important;
+    border: 1px solid #feb2b2 !important;
+    color: #c53030 !important;
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Анимации */
+@keyframes authFadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Адаптивность для малых экранов */
+@media (max-width: 480px) {
+    .login-card {
+        padding: 30px 20px;
+    }
+    .brand-logo {
+        font-size: 2.5rem;
+    }
 }

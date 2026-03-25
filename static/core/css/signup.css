@@ -1,132 +1,157 @@
+/* Используем переменные из основной темы */
+:root {
+    --primary-blue: #3498db;
+    --dark-graphite: #2c3e50;
+    --white: #ffffff;
+    --soft-gray: #f0f2f5;
+}
+
 .login-wrapper {
+    min-height: 100vh;
     display: flex;
-    justify-content: center;
     align-items: center;
-    min-height: 80vh;
-    padding: 20px;
+    justify-content: center;
+    padding: 40px 20px;
 }
 
 .fb-form-container {
+    max-width: 450px;
     width: 100%;
-    max-width: 432px;
+    animation: fadeIn 0.6s ease-out;
 }
 
+/* Логотип Unify Academy */
 .brand-logo {
-    font-size: 48px;
-    color: #0866ff;
-    font-weight: bold;
-    margin-bottom: 20px;
+    font-size: 3rem;
+    font-weight: 800;
+    letter-spacing: -1.5px;
+    margin-bottom: 25px;
     text-align: center;
-    display: block;
-    width: 100%;
+    color: var(--dark-graphite);
 }
 
+.brand-logo span {
+    color: var(--primary-blue);
+    font-weight: 300;
+}
+
+/* Карточка регистрации */
 .fb-card {
-    background: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, .1), 0 8px 16px rgba(0, 0, 0, .1);
-    text-align: center;
+    background: var(--white);
+    padding: 35px;
+    border-radius: 16px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
 }
 
 .fb-card h2 {
-    font-size: 24px;
+    font-size: 1.6rem;
+    font-weight: 700;
     margin-bottom: 5px;
+    color: var(--dark-graphite);
 }
 
 .subtitle {
-    color: #606770;
-    font-size: 15px;
+    color: #64748b;
+    font-size: 0.95rem;
     margin-bottom: 20px;
 }
 
 .form-divider {
     border: 0;
-    border-top: 1px solid #dadde1;
+    border-top: 1px solid #edf2f7;
     margin: 20px 0;
 }
 
-/* Инпуты */
+/* Поля ввода */
 .input-group {
-    margin-bottom: 12px;
+    margin-bottom: 15px;
     position: relative;
-    display: flex;
-    align-items: center;
 }
 
-input[type="text"],
-input[type="email"],
-input[type="password"] {
+.input-group input {
     width: 100%;
-    padding: 11px;
-    background-color: #f5f6f7;
-    border: 1px solid #dddfe2;
-    border-radius: 6px;
-    font-size: 15px;
+    padding: 12px 16px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.3s;
 }
 
-/* Стили для глазика */
-.password-field input {
-    padding-right: 45px !important;
+.input-group input:focus {
+    border-color: var(--primary-blue);
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+    outline: none;
 }
 
+/* Кнопка показа пароля */
 .toggle-password-btn {
     position: absolute;
     right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
     background: none;
     border: none;
-    color: #606770;
+    color: #94a3b8;
     cursor: pointer;
     display: flex;
     align-items: center;
-    height: 100%;
-    z-index: 5;
+}
+
+/* Текст политики */
+.policy-text {
+    font-size: 0.8rem;
+    color: #94a3b8;
+    line-height: 1.4;
+    margin: 20px 0;
+}
+
+.policy-text a {
+    color: var(--primary-blue);
+    text-decoration: none;
 }
 
 /* Кнопка регистрации */
 .create-account-btn {
-    background-color: #00a400;
-    border: none;
-    border-radius: 6px;
-    color: #fff;
-    font-size: 18px;
-    font-weight: bold;
-    padding: 0 32px;
     width: 100%;
-    height: 48px;
-    margin-top: 10px;
-    transition: background-color 0.2s;
+    background-color: var(--primary-blue);
+    color: white;
+    padding: 14px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.1s;
 }
 
 .create-account-btn:hover {
-    background-color: #008a00;
+    background-color: #2980b9;
 }
 
-.policy-text {
-    font-size: 11px;
-    color: #777;
-    text-align: left;
-    margin: 10px 0;
+.create-account-btn:active {
+    transform: scale(0.98);
 }
 
+/* Ссылка на логин */
 .login-link {
-    margin-top: 15px;
+    margin-top: 25px;
+    text-align: center;
 }
 
 .login-link a {
-    color: #0866ff;
+    color: var(--primary-blue);
     text-decoration: none;
-    font-size: 15px;
+    font-weight: 600;
+    font-size: 0.95rem;
 }
 
 /* Ошибки */
 .error-summary {
-    background-color: #ffebe8;
-    border: 1px solid #f02849;
-    border-radius: 6px;
-    padding: 10px;
-    margin-bottom: 15px;
-    color: #f02849;
-    font-size: 14px;
     text-align: left;
+    line-height: 1.5;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
 }

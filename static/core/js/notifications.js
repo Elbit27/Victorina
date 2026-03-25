@@ -1,4 +1,10 @@
+if (window.isAuthenticated) {
+    setInterval(checkNotifications, 10000);
+    checkNotifications();
+}
+
 async function checkNotifications() {
+    if (!window.isAuthenticated) return;
     try {
         const response = await fetch('/api/notifications/unread/');
         if (!response.ok) return;
@@ -67,6 +73,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 async function markAllAsRead() {
+    if (!window.isAuthenticated) return;
     try {
         await fetch('/api/notifications/mark_all_read/', {
             method: 'POST',
