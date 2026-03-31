@@ -1,18 +1,32 @@
+# Django & DB
 Django
 psycopg2-binary
 python-decouple
-djangorestframework
 dj-rest-auth
 django-filter
+whitenoise
 gunicorn
+
+# Google Auth & Security
+django-allauth
+requests
+PyJWT
+cryptography
+
+# AI (Gemini)
+google-genai
+pydantic
+httpx
+
+# Real-time (Channels)
 channels
 channels-redis
-daphne==4.1.0
-whitenoise
-Pillow
-django-allauth
-redis
+daphne
+websockets
+
+# Background Tasks (Celery)
 celery
-requests==2.31.0
-PyJWT==2.8.0
-cryptography==42.0.5
+redis
+
+# Media
+Pillow
