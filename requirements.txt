@@ -13,3 +13,4 @@ Pillow
 django-allauth
 redis
 celery
+requests==2.31.0
