@@ -69,6 +69,6 @@ class Team(models.Model):
         return f"{self.name} (Игра: {self.game.title})"
 
 class Player(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     game = models.ForeignKey(Game, on_delete=models.CASCADE)
     team = models.ForeignKey(Team, on_delete=models.SET_NULL, null=True, blank=True)

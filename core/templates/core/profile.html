@@ -1,39 +1,85 @@
 {% extends 'core/base.html' %}
 {% load static %}
 
-{% block title %}Личный кабинет | Lumos Academy{% endblock %}
+{% block title %}Личный кабинет | Unify Academy{% endblock %}
 
 {% block css %}
 <link rel="stylesheet" href="{% static 'core/css/profile.css' %}">
+
 {% endblock %}
 
 {% block content %}
 <div class="profile-wrapper py-5">
     <div class="row g-4">
         <div class="col-lg-4">
-            <div class="profile-side-card text-center">
+            <div class="profile-side-card text-center p-4 shadow-sm bg-white rounded">
                 <div class="avatar-wrapper mb-4">
-                    <div class="profile-main-avatar">
+                    <div class="profile-main-avatar mx-auto">
                         {{ user.username|slice:":1"|upper }}
                     </div>
                 </div>
 
-                <h2 class="user-name">{{ user.username }}</h2>
-                <p class="user-email">{{ user.email|default:"academy.student@lumos.edu" }}</p>
+                <h3 class="user-name mb-1">{{ user.first_name }} {{ user.last_name}}</h3>
 
-                <div class="stats-container row g-0">
+                <div class="mb-3">
+                    {% if user.role == 'teacher' %}
+                        <span class="badge badge-role bg-success-subtle text-success border border-success-subtle">
+                            <i class="bi bi-person-badge me-1"></i>Преподаватель
+                        </span>
+                    {% else %}
+                        <span class="badge badge-role bg-primary-subtle text-primary border border-primary-subtle">
+                            <i class="bi bi-mortarboard me-1"></i>Студент
+                        </span>
+                    {% endif %}
+                </div>
+
+                <p class="user-email text-muted mb-4 small">
+                    {{ user.email|default:"academy.student@lumos.edu" }}
+                </p>
+
+                <div class="user-academic-info p-3 mb-4 rounded text-start">
+                    <div class="mb-3">
+                        <span class="academic-label d-block">Факультет</span>
+                        <span class="academic-value">
+                            <i class="bi bi-bank me-2 text-primary"></i>{{ user.faculty.name|default:"Не указан" }}
+                        </span>
+                    </div>
+
+                    {% if user.role == 'student' %}
+                    <div class="mb-0">
+                        <span class="academic-label d-block">Группа</span>
+                        <span class="academic-value">
+                            <i class="bi bi-people me-2 text-primary"></i>{{ user.group.name|default:"Не назначена" }}
+                        </span>
+                    </div>
+                    {% elif user.role == 'teacher' %}
+                    <div class="mb-0">
+                        <span class="academic-label d-block">Кафедра</span>
+                        <span class="academic-value">
+                            <i class="bi bi-building me-2 text-success"></i>{{ user.department.name|default:"Не указана" }}
+                        </span>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="stats-container row g-0 border-top pt-3">
                     <div class="col-6 stat-item border-end">
-                        <div class="stat-value">{{ games.count }}</div>
-                        <div class="stat-label">Проектов</div>
+                        <div class="stat-value text-primary">{{ games.count }}</div>
+                        <div class="stat-label">Сессий</div>
                     </div>
                     <div class="col-6 stat-item">
-                        <div class="stat-value">{{ user.date_joined|date:"Y" }}</div>
-                        <div class="stat-label">С нами</div>
+                        {% if user.role == 'student' and user.group %}
+                            <div class="stat-value text-primary">{{ user.group.course }}</div>
+                            <div class="stat-label">Курс</div>
+                        {% else %}
+                            <div class="stat-value text-primary">{{ user.date_joined|date:"Y" }}</div>
+                            <div class="stat-label">С нами</div>
+                        {% endif %}
                     </div>
                 </div>
 
-                <div class="profile-actions mt-4">
-                    <a href="/accounts/logout/" class="btn-logout-minimal">
+                <div class="profile-actions mt-4 border-top pt-3">
+                    <a href="{% url 'account_logout' %}" class="btn-logout-minimal text-danger text-decoration-none small">
                         <i class="bi bi-box-arrow-right me-2"></i>Выйти из профиля
                     </a>
                 </div>
@@ -42,8 +88,8 @@
 
         <div class="col-lg-8">
             <div class="content-header d-flex justify-content-between align-items-center mb-4">
-                <h3 class="section-title">Мои учебные сессии</h3>
-                <a href="{% url 'game-create' %}" class="btn-create-new">
+                <h3 class="section-title h4 mb-0">Мои учебные сессии</h3>
+                <a href="{% url 'game-create' %}" class="btn-create-new btn btn-primary btn-sm rounded-pill px-3">
                     <i class="bi bi-plus-lg me-2"></i>Создать новую
                 </a>
             </div>
@@ -51,22 +97,22 @@
             <div class="sessions-grid">
                 {% if games %}
                     {% for game in games %}
-                    <div class="session-card mb-3">
+                    <div class="session-card mb-3 p-3 bg-white shadow-sm rounded border">
                         <div class="row align-items-center g-3">
                             <div class="col-md-6">
-                                <h5 class="session-title">{{ game.title }}</h5>
-                                <div class="session-meta">
-                                    <span class="meta-pin"><i class="bi bi-key me-1"></i>{{ game.pin_code }}</span>
+                                <h5 class="session-title mb-1 h6 fw-bold">{{ game.title }}</h5>
+                                <div class="session-meta small text-muted">
+                                    <span class="meta-pin me-3"><i class="bi bi-key me-1"></i>{{ game.pin_code }}</span>
                                     <span class="meta-qty"><i class="bi bi-layers me-1"></i>{{ game.questions.count }} вопросов</span>
                                 </div>
                             </div>
                             <div class="col-md-6 text-md-end">
                                 <div class="action-group">
-                                    <a href="{% url 'game-update' game.id %}" class="btn-edit-session">
+                                    <a href="{% url 'game-update' game.id %}" class="btn btn-outline-secondary btn-sm me-2">
                                         <i class="bi bi-pencil"></i>
                                     </a>
-                                    <a href="{% url 'play_game' game.id %}" class="btn-launch-session">
-                                        Запустить битву <i class="bi bi-play-fill ms-1"></i>
+                                    <a href="{% url 'play_game' game.id %}" class="btn btn-primary btn-sm px-4">
+                                        Запустить <i class="bi bi-play-fill ms-1"></i>
                                     </a>
                                 </div>
                             </div>
@@ -74,9 +120,10 @@
                     </div>
                     {% endfor %}
                 {% else %}
-                    <div class="empty-sessions text-center py-5">
+                    <div class="empty-sessions text-center py-5 bg-white rounded shadow-sm border">
                         <i class="bi bi-folder2-open display-4 text-muted mb-3 d-block"></i>
-                        <p>У вас пока нет созданных сессий</p>
+                        <p class="text-muted">У вас пока нет созданных сессий</p>
+                        <a href="{% url 'game-create' %}" class="btn btn-outline-primary btn-sm mt-2">Создать первую сессию</a>
                     </div>
                 {% endif %}
             </div>

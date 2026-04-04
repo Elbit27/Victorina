@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Завершение регистрации в Unify</h4>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted">Пожалуйста, укажите ваши данные, чтобы мы настроили ваше расписание.</p>
+
+                    <form method="post" id="onboardingForm">
+                        {% csrf_token %}
+
+                        <div class="mb-3">
+                            <label for="{{ form.role.id_for_label }}" class="form-label font-weight-bold">Кто вы?</label>
+                            {{ form.role }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.faculty.id_for_label }}" class="form-label">Ваш Факультет</label>
+                            {{ form.faculty }}
+                        </div>
+
+                        <div id="student-fields" style="display: none;" class="p-3 mb-3 bg-light border rounded">
+                            <h6 class="text-primary">Данные студента</h6>
+                            <div class="mb-3">
+                                <label for="{{ form.group.id_for_label }}" class="form-label">Группа</label>
+                                {{ form.group }}
+                            </div>
+                        </div>
+
+                        <div id="teacher-fields" style="display: none;" class="p-3 mb-3 bg-light border rounded">
+                            <h6 class="text-success">Данные преподавателя</h6>
+                            <div class="mb-3">
+                                <label for="{{ form.department.id_for_label }}" class="form-label">Кафедра</label>
+                                {{ form.department }}
+                            </div>
+                            <div class="mb-3">
+                                <label for="{{ form.subject.id_for_label }}" class="form-label">Основной предмет</label>
+                                {{ form.subject }}
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">Сохранить и войти</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const roleSelect = document.getElementById('id_role'); // Django ID по умолчанию
+        const studentFields = document.getElementById('student-fields');
+        const teacherFields = document.getElementById('teacher-fields');
+
+        function toggleFields() {
+            const role = roleSelect.value;
+            if (role === 'student') {
+                studentFields.style.display = 'block';
+                teacherFields.style.display = 'none';
+            } else if (role === 'teacher') {
+                studentFields.style.display = 'none';
+                teacherFields.style.display = 'block';
+            } else {
+                studentFields.style.display = 'none';
+                teacherFields.style.display = 'none';
+            }
+        }
+
+        roleSelect.addEventListener('change', toggleFields);
+        toggleFields(); // Вызываем при загрузке, если форма уже заполнена частично
+    });
+</script>
+{% endblock %}

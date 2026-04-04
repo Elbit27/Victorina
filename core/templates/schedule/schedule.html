@@ -1,0 +1,60 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Расписание | Unify Academy{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'schedule/css/schedule.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="header-section mb-5 text-center">
+        <h2 class="fw-bold">Учебное расписание</h2>
+        <p class="text-muted">Ваш актуальный график занятий на текущую неделю</p>
+    </div>
+
+    <div class="row g-4 overflow-auto flex-nowrap pb-3 shadow-scroll">
+        {% for day_num, lessons in schedule.items %}
+        <div class="col-11 col-sm-6 col-md-4 col-lg-3 day-column" data-day="{{ day_num }}">
+            <div class="day-card h-100">
+                <div class="day-header p-3">
+                    <h5 class="mb-0 text-uppercase fw-bold">
+                        {% if day_num == 1 %}Понедельник{% elif day_num == 2 %}Вторник{% elif day_num == 3 %}Среда{% elif day_num == 4 %}Четверг{% elif day_num == 5 %}Пятница{% else %}Суббота{% endif %}
+                    </h5>
+                </div>
+                
+                <div class="day-body p-2">
+                    {% if lessons %}
+                        {% for lesson in lessons|dictsort:"lesson_number" %}
+                        <div class="lesson-item mb-2 p-3 rounded shadow-sm" 
+                             data-start="{{ lesson.get_lesson_number_display|slice:':5' }}" 
+                             data-end="{{ lesson.get_lesson_number_display|slice:'8:' }}">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <span class="badge time-badge">{{ lesson.get_lesson_number_display }}</span>
+                                <span class="lesson-num text-muted small">#{{ lesson.lesson_number }}</span>
+                            </div>
+                            <h6 class="subject-name fw-bold mb-1">{{ lesson.subject.name }}</h6>
+                            <div class="details">
+                                <p class="mb-1"><i class="bi bi-person me-2"></i>{{ lesson.teacher.get_full_name|default:lesson.teacher.username }}</p>
+                                <p class="mb-0"><i class="bi bi-geo-alt me-2"></i>каб. {{ lesson.room.number }} ({{ lesson.room.campus.name }})</p>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="empty-day text-center py-5">
+                            <i class="bi bi-calendar-x text-muted opacity-50"></i>
+                            <p class="text-muted small mt-2">Занятий нет</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script src="{% static 'schedule/js/schedule.js' %}"></script>
+{% endblock %}

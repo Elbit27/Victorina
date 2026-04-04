@@ -44,6 +44,7 @@
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end border-0 shadow" aria-labelledby="userDropdown">
                                 <li><a class="dropdown-item" href="{% url 'profile' %}"><i class="bi bi-person me-2"></i>Профиль</a></li>
+                                <li><a class="dropdown-item" href="{% url 'schedule' %}"><i class="bi bi-table me-2"></i>Расписание</a></li>
                                 {% if request.user.is_staff or request.user.is_superuser %}
                                     <li><a class="dropdown-item" href="{% url 'game-create' %}"><i class="bi bi-plus-circle me-2"></i>Создать экзамен</a></li>
                                 {% endif %}

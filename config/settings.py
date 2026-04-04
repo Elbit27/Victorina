@@ -22,8 +22,10 @@ SITE_ID = 1
 INSTALLED_APPS = [
     'daphne',
     # my_apps
+    'account.apps.AccountConfig',
     'core',
     'game',
+    'schedule',
     'channels',
     # ------------------------
     'django.contrib.sites',
@@ -56,6 +58,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'allauth.account.middleware.AccountMiddleware',
     'django.middleware.locale.LocaleMiddleware',
+    'account.middleware.ProfileCompleteMiddleware',
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -162,7 +165,7 @@ REST_USE_JWT = True
 
 ASGI_APPLICATION = 'config.asgi.application'
 
-REDIS_URL = os.environ.get('REDIS_URL', 'redis://redis:6379/0')
+REDIS_URL = os.environ.get('REDIS_URL', 'redis://localhost:6379/0')
 
 CHANNEL_LAYERS = {
     'default': {
@@ -191,8 +194,10 @@ DEFAULT_FROM_EMAIL = f"Unify Academy <{config('EMAIL_HOST_USER')}>"
 ACCOUNT_EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL = '/'
 ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
 
-CELERY_BROKER_URL = 'redis://redis:6379/0'
-CELERY_RESULT_BACKEND = 'redis://redis:6379/0'
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
+
+AUTH_USER_MODEL = 'users.User'

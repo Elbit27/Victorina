@@ -15,6 +15,7 @@ urlpatterns = [
     path('signup/', AuthenticationMethods.signup, name='account_signup'),
     path('login/', AuthenticationMethods.LoginView.as_view(), name='account_login'),
     path('logout/', custom_logout, name='account_logout'),
+    path('complete_profile/', views.complete_profile, name='complete_profile'),
     # path('profile/', views.UserProfileView.as_view(), name='user-profile'),
     # path('profile/<int:pk>/', views.UserProfileView.as_view(), name='user-detail'),
     # path('profile/info/', views.add_info, name='add-info'),
