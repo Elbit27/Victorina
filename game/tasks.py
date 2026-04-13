@@ -7,10 +7,13 @@ from core.models import Notification
 
 User = get_user_model()
 
-
-@shared_task
-def generate_game_async(topic, count, user_id):
-    print(f"--- [START] Фоновая генерация для пользователя {user_id} ---")
+@shared_task(
+    bind=True,
+    max_retries=3,
+    default_retry_delay=5 # подождать 5 секунд перед повтором
+)
+def generate_game_async(self, topic, count, user_id):
+    print(f"--- [START] Фоновая генерация для пользователя {user_id.username} ---")
     try:
         # 1. Запрос к Gemini
         data = generate_game_data(topic, count)
@@ -56,5 +59,5 @@ def generate_game_async(topic, count, user_id):
     except User.DoesNotExist:
         return f"Ошибка: Пользователь с ID {user_id} не найден"
     except Exception as e:
-        print(f"--- [ERROR] {str(e)} ---")
+        print(f"--- [ERROR] Попытка {self.request.retries}: {str(e)} ---")
         return f"Ошибка при генерации: {str(e)}"

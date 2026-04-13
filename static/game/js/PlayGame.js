@@ -77,21 +77,49 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (data.type === 'NEXT_QUESTION') {
             if (data.player_stats) playerStats = data.player_stats;
-            currentIdx = data.new_idx;
 
-            const scoreContainer = document.getElementById('live-scores');
-            if (scoreContainer && data.scores) {
-                // Используем data.team_names для отображения имен
-                scoreContainer.innerHTML = Object.entries(data.scores).map(([teamId, score]) => {
-                    const name = data.team_names && data.team_names[teamId]
-                                 ? data.team_names[teamId]
-                                 : `Команда #${teamId}`;
-                    return `<span class="badge rounded-pill live-score-badge">${name}: ${score}</span>`;
-                }).join('');
+            const winner = data.winner_name;
+            const correctText = data.correct_answer;
+            const btns = document.querySelectorAll('.answer-btn');
+            const statusMsg = document.getElementById('game-status-msg');
+
+            // 1. Подсвечиваем правильный ответ для ВСЕХ
+            btns.forEach(btn => {
+                if (btn.innerText.trim() === correctText) {
+                    btn.style.border = '4px solid #28a745';
+                    btn.style.backgroundColor = 'rgba(40, 167, 69, 0.2)';
+                    btn.style.boxShadow = '0 0 15px rgba(40, 167, 69, 0.5)';
+                }
+                btn.disabled = true; // Запрещаем кликать во время паузы
+            });
+
+            // 2. Пишем имя победителя
+            if (statusMsg && winner) {
+                statusMsg.innerText = `✅ ${winner} ответил(а) верно!`;
+                statusMsg.style.color = "#28a745";
+                statusMsg.style.fontWeight = "bold";
             }
 
-            renderQuestion();
+            // 3. Ждем 2 секунды и только ПОТОМ переходим к следующему вопросу
+            setTimeout(() => {
+                currentIdx = data.new_idx;
+
+                // Обновляем счет
+                const scoreContainer = document.getElementById('live-scores');
+                if (scoreContainer && data.scores) {
+                    scoreContainer.innerHTML = Object.entries(data.scores).map(([teamId, score]) => {
+                        const name = data.team_names && data.team_names[teamId]
+                                     ? data.team_names[teamId]
+                                     : `Команда #${teamId}`;
+                        return `<span class="badge rounded-pill live-score-badge">${name}: ${score}</span>`;
+                    }).join('');
+                }
+
+                renderQuestion(); // Эта функция очистит стили кнопок и уберет надпись
+            }, 2000);
+
         }
+
 
         else if (data.type === 'GAME_OVER') {
             console.log("🏁 Игра официально окончена сервером");
@@ -233,50 +261,6 @@ function applyBlockVisuals() {
     }
 }
 
-function changeTeam(teamName) {
-    // Теперь эта функция берет gameSocket из глобальной области
-    if (gameSocket && gameSocket.readyState === WebSocket.OPEN) {
-        console.log("Отправляю запрос на смену команды:", teamName);
-        gameSocket.send(JSON.stringify({
-            'action': 'join_team',
-            'team': teamName
-        }));
-    } else {
-        console.log("❌ Сокет всё еще не готов. Текущий статус:", gameSocket ? gameSocket.readyState : 'null');
-    }
-}
-
-function updateLobbyUI(players) {
-    const container = document.getElementById('teams-container');
-    if (!container) return;
-
-    // Группируем игроков по командам
-    const teamsMap = {};
-    for (let user in players) {
-        const tName = players[user].team_name || "Без команды";
-        const tId = players[user].team_id;
-        if (!teamsMap[tId]) teamsMap[tId] = { name: tName, players: [] };
-        teamsMap[tId].players.push(user);
-    }
-
-    // Рендерим карточки
-    container.innerHTML = Object.entries(teamsMap).map(([id, team]) => `
-        <div class="col-md-4">
-            <div class="card shadow-sm border-primary">
-                <div class="card-header bg-light d-flex justify-content-between align-items-center">
-                    <strong class="text-primary">${team.name}</strong>
-                    <button onclick="joinTeamRemote(${id})" class="btn btn-primary btn-sm">Вступить</button>
-                </div>
-                <div class="card-body p-2">
-                    <ul class="list-unstyled mb-0">
-                        ${team.players.map(p => `<li>👤 ${p}</li>`).join('')}
-                    </ul>
-                </div>
-            </div>
-        </div>
-    `).join('');
-}
-
 function joinTeamRemote(teamId) {
     const oldTeam = myTeam;
     myTeam = teamId;
@@ -333,65 +317,170 @@ function showResults(finalScores, teamNames) {
     const resultScreen = document.getElementById('result-screen');
 
     if (mainUI) mainUI.style.display = 'none';
-    if (resultScreen) resultScreen.style.display = 'block';
+    if (resultScreen) {
+        resultScreen.style.display = 'block';
+        // Устанавливаем минималистичный БЕЛЫЙ фон
+        resultScreen.style.backgroundColor = '#ffffff';
+        resultScreen.style.minHeight = '100vh';
+    }
 
-    let winnerName = "Игра завершена";
+    let winnerName = "—";
     let winnerScore = 0;
+    let isDraw = false;
 
     if (finalScores && teamNames && Object.keys(finalScores).length > 0) {
         const sortedTeams = Object.entries(finalScores).sort(([, a], [, b]) => b - a);
-        const [topTeamId, topScore] = sortedTeams[0];
-        winnerName = teamNames[topTeamId] || `Команда #${topTeamId}`;
-        winnerScore = topScore;
+        winnerScore = sortedTeams[0][1];
+        const winners = sortedTeams.filter(([, score]) => score === winnerScore);
+
+        if (winners.length > 1) {
+            isDraw = true;
+            winnerName = winners.map(([id]) => teamNames[id] || `Команда #${id}`).join(' и ');
+        } else {
+            const topTeamId = sortedTeams[0][0];
+            winnerName = teamNames[topTeamId] || `Команда #${topTeamId}`;
+        }
     }
 
     const sortedPlayers = Object.entries(playerStats || {}).sort(([, a], [, b]) => b - a);
 
-    if (resultScreen) {
-        resultScreen.innerHTML = `
-            <div class="container py-5">
-                <div class="text-center mb-5">
-                    <p class="text-uppercase fw-bold tracking-widest text-blue-400 mb-2" style="color: #60a5fa; letter-spacing: 2px;">Финальные результаты</p>
-                    <h1 class="display-3 winner-title mb-3">
-                        ${winnerName}
-                    </h1>
-                    <div class="d-inline-block px-4 py-2 rounded-pill shadow-sm" style="background: rgba(251, 191, 36, 0.1); border: 1px solid rgba(251, 191, 36, 0.3);">
-                        <span class="text-warning fw-bold fs-4">🏆 Победитель счётом ${winnerScore}</span>
-                    </div>
-                </div>
+    // Внедряем стили и верстку прямо в innerHTML
+    resultScreen.innerHTML = `
+        <style>
+            @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap');
 
-                <div class="result-card mx-auto shadow-2xl" style="max-width: 700px;">
-                    <div class="d-flex justify-content-between align-items-center mb-4 border-bottom border-secondary pb-3">
-                        <h4 class="mb-0 fw-bold">Рейтинг игроков</h4>
-                        <span style="color: #ffffff;">${sortedPlayers.length} участников</span>
-                    </div>
+            .unify-minimal-wrapper {
+                font-family: 'Inter', system-ui, -apple-system, sans-serif;
+                color: #1f2937; /* Темно-серый текст */
+                max-width: 650px;
+                margin: 0 auto;
+                padding: 80px 20px;
+                animation: unifySlideIn 0.6s ease;
+            }
+            .unify-label {
+                color: #3b82f6; /* Фирменный синий */
+                text-transform: uppercase;
+                font-weight: 700;
+                letter-spacing: 1.5px;
+                font-size: 0.9rem;
+                margin-bottom: 12px;
+            }
+            .unify-winner-title {
+                font-size: 2.8rem;
+                font-weight: 800;
+                margin: 0;
+                color: #111827; /* Почти черный текст */
+                line-height: 1.2;
+            }
+            .unify-total-points {
+                display: inline-block;
+                margin-top: 25px;
+                padding: 10px 28px;
+                background: #f0f7ff; /* Очень светлый синий */
+                border: 1px solid #bfdbfe;
+                color: #1e40af; /* Темно-синий текст */
+                border-radius: 50px;
+                font-weight: 700;
+                font-size: 1.1rem;
+            }
+            .unify-card-minimal {
+                background: #f9fafb; /* Едва заметный серый фон карточки */
+                border: 1px solid #e5e7eb;
+                border-radius: 20px;
+                padding: 30px;
+                margin-top: 50px;
+                box-shadow: 0 10px 25px rgba(0,0,0,0.03);
+            }
+            .unify-header-minimal {
+                display: flex;
+                justify-content: space-between;
+                border-bottom: 2px solid #e5e7eb;
+                padding-bottom: 18px;
+                margin-bottom: 25px;
+                font-weight: 700;
+                color: #111827;
+                font-size: 1.1rem;
+            }
+            .player-item-minimal {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 12px 16px;
+                border-radius: 12px;
+                margin-bottom: 8px;
+                transition: 0.2s ease;
+            }
+            .player-item-minimal:hover {
+                background: #eff6ff;
+                transform: translateX(4px);
+            }
+            .rank-box-minimal {
+                width: 32px;
+                height: 32px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: #e5e7eb;
+                color: #4b5563;
+                border-radius: 8px;
+                margin-right: 18px;
+                font-weight: 800;
+                font-size: 0.9rem;
+            }
+            .gold-minimal { background: #fbbf24; color: #ffffff; } /* Золото */
+            .pts-minimal { color: #3b82f6; font-weight: 700; font-size: 0.95rem; }
+            .btn-unify-minimal {
+                width: 100%;
+                background: #3b82f6;
+                color: white;
+                border: none;
+                padding: 18px;
+                border-radius: 14px;
+                font-weight: 700;
+                font-size: 1.1rem;
+                cursor: pointer;
+                margin-top: 30px;
+                transition: all 0.2s ease;
+            }
+            .btn-unify-minimal:hover {
+                background: #2563eb;
+                box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
+            }
+            @keyframes unifySlideIn {
+                from { opacity: 0; transform: translateY(15px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+        </style>
 
-                    <div class="player-list">
-                        ${sortedPlayers.length > 0 ? sortedPlayers.map(([name, score], index) => `
-                            <div class="player-row d-flex justify-content-between align-items-center p-3">
-                                <div class="d-flex align-items-center">
-                                    <div class="rank-circle me-3 d-flex align-items-center justify-content-center rounded-circle"
-                                         style="width: 40px; height: 40px; background: ${index === 0 ? '#fbbf24' : 'rgba(255,255,255,0.1)'}; color: ${index === 0 ? '#000' : '#fff'}; font-weight: 800;">
-                                        ${index + 1}
-                                    </div>
-                                    <span class="fs-5 fw-medium">${name}</span>
-                                </div>
-                                <span class="badge score-badge rounded-pill fs-6">${score} правильных</span>
-                            </div>
-                        `).join('') : '<p class="text-center py-5 text-muted">Никто не набрал очков в этом раунде</p>'}
-                    </div>
-
-                    <div class="text-center mt-5">
-                        <button onclick="location.reload()" class="btn btn-restart shadow-lg">
-                             Играть снова
-                        </button>
-                    </div>
-                </div>
-
-                <div class="text-center mt-4 text-muted small">
-                    <p>© 2026 Victorina Game • Разработано для побед</p>
-                </div>
+        <div class="unify-minimal-wrapper">
+            <div class="text-center">
+                <p class="unify-label">${isDraw ? 'Ничья' : 'Битва завершена'}</p>
+                <h1 class="unify-winner-title">${winnerName}</h1>
+                <div class="unify-total-points">🏆 Набрано: ${winnerScore} очков</div>
             </div>
-        `;
-    }
+
+            <div class="unify-card-minimal">
+                <div class="unify-header-minimal">
+                    <span>Индивидуальный рейтинг</span>
+                    <span style="color: #6b7280; font-weight: 400; font-size: 0.9rem;">${sortedPlayers.length} участников</span>
+                </div>
+
+                <div class="list-container">
+                    ${sortedPlayers.length > 0 ? sortedPlayers.map(([name, score], index) => `
+                        <div class="player-item-minimal">
+                            <div style="display: flex; align-items: center;">
+                                <div class="rank-box-minimal ${index === 0 ? 'gold-minimal' : ''}">${index + 1}</div>
+                                <span style="font-weight: 500;">${name}</span>
+                            </div>
+                            <span class="pts-minimal">${score} pts</span>
+                        </div>
+                    `).join('') : '<p style="text-align: center; color: #9ca3af; padding: 30px 0;">Участники не ответили ни разу</p>'}
+                </div>
+
+                <button onclick="location.reload()" class="btn-unify-minimal">
+                    Начать новый раунд
+                </button>
+            </div>
+        </div>
+    `;
 }

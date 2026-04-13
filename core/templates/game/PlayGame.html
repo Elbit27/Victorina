@@ -60,22 +60,10 @@
         </div>
     </div>
 
-    <div id="result-screen" class="result-card text-center shadow-lg p-5" style="display: none;">
-        <div class="celebration-icon mb-3">🏁</div>
-        <h2 class="display-4 mb-4">Игра окончена!</h2>
-
-        <div id="final-teams-results" class="mb-4">
-            </div>
-
-        <div id="player-rating-container">
-            </div>
-
-        <div class="mt-5 d-flex justify-content-center gap-3">
-            <button onclick="location.reload()" class="btn btn-primary btn-lg px-5">В лобби</button>
-            <a href="{% url 'game-list-html' %}" class="btn btn-outline-secondary btn-lg px-5">К списку игр</a>
-        </div>
+    <div id="result-screen" style="display:none;"></div>
     </div>
 </div>
+
 
 <script id="game-data" type="application/json">
 {
