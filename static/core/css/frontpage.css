@@ -1,175 +1,200 @@
-/* ПАЛИТРА */
+/* Общие настройки */
 :root {
+    --primary: #3498db;
+    --dark: #2c3e50;
+    --light: #f8f9fa;
     --white: #ffffff;
-    --graphite: #2c3e50;      /* Темно-графитовый */
-    --sky-blue: #3498db;      /* Небесно-голубой */
-    --light-gray: #f8f9fa;
-    --text-muted: #7f8c8d;
+    --text-gray: #64748b;
 }
 
-.landing-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 20px;
+.landing-wrapper {
+    padding-bottom: 80px;
 }
 
-/* ГЕРОЙ-СЕКЦИЯ */
-.hero {
+/* Hero Section */
+.hero-section {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: space-between;
-    padding: 100px 0;
-    gap: 50px;
+    gap: 40px;
+    padding: 60px 0;
 }
 
-.hero-image {
-    position: relative;
-    perspective: 1000px;
+@media (min-width: 992px) {
+    .hero-section {
+        flex-direction: row;
+        justify-content: space-between;
+        padding: 100px 0;
+        text-align: left;
+    }
 }
 
-.float-bg {
-    /* Вариант А: Фиксированная ширина в пикселях (например, 300px) */
-    width: 300px;
-    height: auto; /* Высота подстроится автоматически, чтобы сохранить пропорции */
-
-    /* Вариант Б: Относительная ширина в процентах от родителя (например, 50%) */
-    /* width: 50%; */
-    /* height: auto; */
-
-    object-fit: contain;
+.hero-text {
+    max-width: 600px;
 }
 
-.hero-content p {
-    font-size: 1.25rem;
-    color: var(--text-muted);
-    margin-bottom: 40px;
-    max-width: 500px;
+.badge-new {
+    background: rgba(52, 152, 219, 0.1);
+    color: var(--primary);
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    display: inline-block;
+    margin-bottom: 20px;
 }
 
-/* КНОПКИ */
-.cta-group {
+.hero-text h1 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--dark);
+    line-height: 1.1;
+    margin-bottom: 24px;
+}
+
+.hero-text h1 span {
+    color: var(--primary);
+}
+
+.hero-text p {
+    font-size: 1.15rem;
+    color: var(--text-gray);
+    margin-bottom: 35px;
+}
+
+/* Кнопки */
+.hero-actions {
     display: flex;
     gap: 15px;
+    flex-wrap: wrap;
 }
 
-.btn {
-    padding: 14px 28px;
-    border-radius: 6px;
+.btn-main {
+    background: var(--primary);
+    color: white;
+    padding: 16px 32px;
+    border-radius: 12px;
     text-decoration: none;
     font-weight: 600;
-    transition: all 0.3s ease;
-    font-size: 1rem;
+    transition: 0.3s;
+    box-shadow: 0 10px 20px rgba(52, 152, 219, 0.2);
 }
 
-.btn-primary {
-    background-color: var(--sky-blue);
-    color: var(--white);
+.btn-secondary {
+    background: var(--light);
+    color: var(--dark);
+    padding: 16px 32px;
+    border-radius: 12px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: 0.3s;
 }
 
-.btn-primary:hover {
-    background-color: #2980b9;
-    box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+@media (max-width: 576px) {
+    .btn-main, .btn-secondary { width: 100%; text-align: center; }
 }
 
-.btn-outline {
-    border: 2px solid var(--graphite);
-    color: var(--graphite);
+/* Визуальная часть (Карточка матча) */
+.hero-visual {
+    width: 100%;
+    max-width: 450px;
 }
 
-.btn-outline:hover {
-    background-color: var(--graphite);
-    color: var(--white);
-}
-
-/* ДЕМО-КАРТОЧКА (Академическая) */
-.academic-card {
-    background: var(--light-gray);
+.battle-card-preview {
+    background: white;
+    border-radius: 24px;
     padding: 30px;
-    border-left: 5px solid var(--sky-blue);
-    border-radius: 8px;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.05);
-    width: 400px;
+    box-shadow: 0 25px 50px rgba(0,0,0,0.1);
+    border: 1px solid rgba(0,0,0,0.05);
 }
 
-.status-badge {
-    display: inline-block;
-    background: #e1f5fe;
-    color: var(--sky-blue);
-    padding: 5px 12px;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    font-weight: bold;
-    margin-bottom: 20px;
-}
-
-.team-vs {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-weight: bold;
-    margin-bottom: 20px;
-}
-
-.vs {
-    color: var(--text-muted);
-    font-size: 0.9rem;
-}
-
-.progress-bar {
+.live-dot {
+    width: 8px;
     height: 8px;
-    background: #ddd;
-    border-radius: 4px;
-    overflow: hidden;
+    background: #e74c3c;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 8px;
+    animation: blink 1.5s infinite;
 }
 
-.progress-bar .fill {
-    width: 65%;
-    height: 100%;
-    background: var(--sky-blue);
+@keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
+
+.match-teams {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin: 30px 0;
 }
 
-/* ПРЕИМУЩЕСТВА */
-.features {
-    padding: 80px 0;
+.team {
     text-align: center;
+    font-weight: 700;
 }
 
-.features h2 {
+.team-logo {
+    width: 60px;
+    height: 60px;
+    background: var(--primary);
+    color: white;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+    font-size: 1.2rem;
+}
+
+.team-logo.alt { background: var(--dark); }
+
+.vs-circle {
+    background: #f1f5f9;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    font-weight: 800;
+    color: var(--text-gray);
+}
+
+/* Features Section */
+.features-section {
+    margin-top: 50px;
+}
+
+.section-title {
+    text-align: center;
     margin-bottom: 50px;
-    font-size: 2.2rem;
 }
 
 .features-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 30px;
+    grid-template-columns: 1fr;
+    gap: 25px;
 }
 
-.feature-item {
-    padding: 40px;
-    background: var(--white);
-    border: 1px solid #eee;
-    border-radius: 12px;
-    transition: transform 0.3s ease;
+@media (min-width: 768px) {
+    .features-grid { grid-template-columns: repeat(3, 1fr); }
 }
 
-.feature-item:hover {
+.f-card {
+    background: white;
+    padding: 30px;
+    border-radius: 20px;
+    border: 1px solid #f1f5f9;
+    transition: 0.3s;
+}
+
+.f-card:hover {
     transform: translateY(-10px);
-    border-color: var(--sky-blue);
+    box-shadow: 0 20px 30px rgba(0,0,0,0.05);
 }
 
-.feature-item .icon {
-    font-size: 2.5rem;
+.f-icon {
+    font-size: 2rem;
+    color: var(--primary);
     margin-bottom: 20px;
-    display: block;
-}
-
-.feature-item h3 {
-    margin-bottom: 15px;
-    color: var(--graphite);
-}
-
-.feature-item p {
-    color: var(--text-muted);
-    font-size: 0.95rem;
 }

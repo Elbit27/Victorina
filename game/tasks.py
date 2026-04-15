@@ -13,7 +13,7 @@ User = get_user_model()
     default_retry_delay=5 # подождать 5 секунд перед повтором
 )
 def generate_game_async(self, topic, count, user_id):
-    print(f"--- [START] Фоновая генерация для пользователя {user_id.username} ---")
+    print(f"--- [START] Фоновая генерация для пользователя {user_id} ---")
     try:
         # 1. Запрос к Gemini
         data = generate_game_data(topic, count)

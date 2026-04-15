@@ -6,11 +6,6 @@
     --border-color: rgba(255, 255, 255, 0.1);
 }
 
-.navbar-custom {
-    background-color: var(--graphite) !important; /* !important заставит его быть везде одинаковым */
-    border-bottom: 1px solid rgba(255,255,255,0.1);
-}
-
 body {
     background-color: var(--white);
     color: var(--graphite);
@@ -18,10 +13,11 @@ body {
     margin: 0;
 }
 
+/* Navbar */
 .navbar-custom {
     background-color: var(--graphite) !important;
     border-bottom: 1px solid var(--border-color);
-    padding: 12px 0;
+    padding: 10px 0;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
@@ -29,41 +25,51 @@ body {
     font-weight: 800;
     letter-spacing: 1px;
     color: var(--white) !important;
+    transition: 0.3s;
 }
 
-.brand-accent {
-    color: var(--sky-blue);
+@media (max-width: 768px) {
+    .navbar-brand { font-size: 1.1rem !important; }
 }
+@media (max-width: 400px) {
+    .navbar-brand { font-size: 0.95rem !important; letter-spacing: 0; }
+}
+
+.brand-accent { color: var(--sky-blue); }
 
 .nav-link {
     color: rgba(255, 255, 255, 0.8) !important;
     font-weight: 500;
-    margin: 0 10px;
     transition: 0.3s;
 }
 
-.nav-link:hover {
-    color: var(--sky-blue) !important;
+.nav-link:hover { color: var(--sky-blue) !important; }
+
+/* Mobile Menu (Offcanvas) */
+.mobile-link {
+    display: block;
+    color: var(--graphite) !important; /* Исправление: темный текст на белом фоне */
+    text-decoration: none;
+    padding: 15px 0;
+    font-weight: 500;
+    border-bottom: 1px solid #eee;
 }
 
-.notification-bell-icon {
-    font-size: 1.2rem;
-    color: var(--white);
-}
+.mobile-link i { color: var(--sky-blue); }
 
-.notification-badge {
-    display: none;
+.offcanvas-body .avatar-circle {
+    width: 45px;
+    height: 45px;
     background-color: var(--sky-blue);
     color: white;
-    font-size: 0.6rem;
-    padding: 2px 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     border-radius: 50%;
-    position: absolute;
-    top: 5px;
-    right: 0;
-    min-width: 15px;
-    text-align: center;
 }
+
+/* UI Elements */
+.notification-bell-icon { font-size: 1.2rem; color: var(--white); }
 
 .avatar-circle {
     width: 35px;
@@ -74,8 +80,7 @@ body {
     align-items: center;
     justify-content: center;
     border-radius: 50%;
-    font-weight: 600;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
 }
 
 .btn-auth {
@@ -85,96 +90,15 @@ body {
     font-weight: 600;
     padding: 8px 25px;
     border-radius: 6px;
-    transition: 0.3s;
 }
 
-.btn-auth:hover {
-    background-color: #2980b9;
-    transform: translateY(-1px);
-}
-
-.dropdown-menu {
-    border: none;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-    border-radius: 8px;
-}
-
-/* Контейнер выпадающего списка уведомлений */
+/* Notifications Dropdown Fix */
 #notification-items {
-    width: 320px;
+    width: 300px;
     max-height: 400px;
     overflow-y: auto;
-    padding: 0;
-    border: none;
-    box-shadow: 0 15px 35px rgba(0,0,0,0.15);
-    background: var(--white);
-    border-radius: 12px;
 }
 
-/* Заголовок списка */
-.notification-header {
-    padding: 12px 16px;
-    background: var(--soft-gray);
-    border-bottom: 1px solid rgba(0,0,0,0.05);
-    font-weight: 700;
-    font-size: 0.9rem;
-    color: var(--graphite);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-/* Элемент уведомления */
-.notification-item {
-    padding: 12px 16px;
-    border-bottom: 1px solid rgba(0,0,0,0.03);
-    transition: background 0.2s ease;
-    cursor: pointer;
-    position: relative;
-}
-
-.notification-item:hover {
-    background-color: rgba(52, 152, 219, 0.05); /* Легкий оттенок sky-blue */
-}
-
-.notification-item:last-child {
-    border-bottom: none;
-}
-
-/* Текст сообщения */
-.notification-item .message {
-    font-size: 0.85rem;
-    color: var(--graphite);
-    line-height: 1.4;
-    margin-top: 4px;
-}
-
-/* Время уведомления */
-.notification-item .time {
-    font-size: 0.7rem;
-    color: #95a5a6;
-    font-weight: 600;
-    text-transform: uppercase;
-}
-
-/* Точка "новое" (опционально) */
-.notification-item.unread::before {
-    content: '';
-    position: absolute;
-    left: 6px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 6px;
-    height: 6px;
-    background-color: var(--sky-blue);
-    border-radius: 50%;
-}
-
-/* Кастомизация скроллбара для списка */
-#notification-items::-webkit-scrollbar {
-    width: 6px;
-}
-#notification-items::-webkit-scrollbar-thumb {
-    background: #dcdde1;
-    border-radius: 10px;
+@media (max-width: 768px) {
+    #notification-items { width: 260px !important; }
 }

@@ -1,64 +1,79 @@
 {% extends "core/base.html" %}
 {% load static %}
 
-{% block title %}Платформа академического тестирования | Victorina Battle{% endblock %}
+{% block title %}Victorina Battle | Образовательная платформа{% endblock %}
 
 {% block css %}
 <link rel="stylesheet" href="{% static 'core/css/frontpage.css' %}">
 {% endblock %}
 
 {% block content %}
-<div class="landing-container">
+<div class="landing-wrapper">
+    <header class="hero-section">
+        <div class="hero-text">
+            <h1>Превратите учебу в <span>захватывающую битву</span></h1>
+            <p>Первая в Unify Academy платформа для интеллектуальных соревнований между группами. Сражайтесь, побеждайте и поднимайтесь в топ рейтинга.</p>
 
-    <section class="hero">
-        <div class="hero-content">
-            <h1>Интеллектуальный контроль знаний студентов</h1>
-            <p>Инновационная платформа для проведения командных зачетов, проверочных работ и экзаменационных сессий в интерактивном формате.</p>
-            <div class="cta-group">
+            <div class="hero-actions">
                 {% if user.is_authenticated %}
-                    <a href="{% url 'join_page' %}" class="btn btn-primary">Начать тестирование</a>
-                    <a href="#about" class="btn btn-outline">Методология</a>
+                    <a href="{% url 'join_page' %}" class="btn btn-primary btn-lg px-4 w-100-mobile">Войти в лобби</a>
+                    <a href="#features" class="btn btn-outline-dark btn-lg px-4 w-100-mobile">Возможности</a>
                 {% else %}
-                    <a href="{% url 'account_login' %}?next={% url 'frontpage' %}" class="btn btn-primary">Авторизация</a>
-                    <a href="#about" class="btn btn-outline">О платформе</a>
+                    <a href="/accounts/login/" class="btn btn-primary btn-lg px-4 w-100-mobile">Начать бесплатно</a>
+                    <a href="#features" class="btn btn-outline-dark btn-lg px-4 w-100-mobile">Узнать больше</a>
                 {% endif %}
             </div>
         </div>
-        <div class="hero-image">
-            <div class="academic-card">
-                <div class="status-badge">Экзамен: Активен</div>
-                <div class="team-vs">
-                    <span class="t1">Группа ЭУ 15-25</span>
-                    <span class="vs">Баллы</span>
-                    <span class="t2">Группа ЭУ 15-26</span>
+
+        <div class="hero-visual">
+            <div class="battle-card-preview">
+                <div class="card-header">
+                    <span class="live-dot"></span> LIVE MATCH
                 </div>
-                <div class="progress-bar"><div class="fill"></div></div>
+                <div class="match-teams">
+                    <div class="team">
+                        <div class="team-logo">ЭИ</div>
+                        <span>15-25</span>
+                    </div>
+                    <div class="vs-circle">VS</div>
+                    <div class="team">
+                        <div class="team-logo alt">ЭИ</div>
+                        <span>15-26</span>
+                    </div>
+                </div>
+                <div class="match-stats">
+                    <div class="progress-container">
+                        <div class="progress-fill" style="width: 70%;"></div>
+                    </div>
+                    <div class="score-display">1,240 XP — 890 XP</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section id="features" class="features-section">
+        <div class="section-title">
+            <h2>Почему студенты выбирают нас?</h2>
+            <p>Мы объединили механику видеоигр и учебную программу Informatics.</p>
+        </div>
+
+        <div class="features-grid">
+            <div class="f-card">
+                <div class="f-icon"><i class="bi bi-cpu"></i></div>
+                <h3>Real-time Engine</h3>
+                <p>Ваши ответы обрабатываются мгновенно благодаря связке Django, Redis и Daphne.</p>
+            </div>
+            <div class="f-card">
+                <div class="f-icon"><i class="bi bi-trophy"></i></div>
+                <h3>Система лиг</h3>
+                <p>Зарабатывайте очки рейтинга (ECTS) и выводите свою группу на первое место в академии.</p>
+            </div>
+            <div class="f-card">
+                <div class="f-icon"><i class="bi bi-shield-check"></i></div>
+                <h3>Честная игра</h3>
+                <p>Уникальные алгоритмы генерации вопросов исключают возможность списывания.</p>
             </div>
         </div>
     </section>
-
-    <section id="about" class="features">
-        <h2>Преимущества для учебного процесса</h2>
-        <div class="features-grid">
-            <article class="feature-item">
-                <div class="icon">🎓</div>
-                <h3>Академическая оценка</h3>
-                <p>Автоматизированный подсчет баллов и формирование ведомостей по итогам лекционных занятий.</p>
-            </article>
-
-            <article class="feature-item">
-                <div class="icon">⏱️</div>
-                <h3>Контроль времени</h3>
-                <p>Режим "блиц-опроса" тренирует скорость реакции и глубину освоения материала в реальном времени.</p>
-            </article>
-
-            <article class="feature-item">
-                <div class="icon">📝</div>
-                <h3>Аналитика ответов</h3>
-                <p>Детальная статистика по каждому студенту для выявления пробелов в знаниях после курса лекций.</p>
-            </article>
-        </div>
-    </section>
-
 </div>
 {% endblock %}
